@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>添加待爬取日记</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+		<!-- 引入样式文件 -->
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vant@2.4/lib/index.css">
+		<link rel="stylesheet" type="text/css" href="css/base.css"/>
+		<script type="text/javascript" src="http://www.duola.vip/hui/diary/js/timeDeal.js"></script>
+		<script type="text/javascript" src="http://www.duola.vip/hui/diary/js/jsutil.js"></script>
+		<script type="text/javascript" src="http://www.duola.vip/hui/diary/js/index.js"></script>
+		<style>
+			#app{margin: 15px;font-size: 15px;}
+			.fabu{float: right;outline: none;background-color: #8bd226;color: #fff;border: none;padding: 5px 18px;border-radius: 3px;}
+			.textarea_div{margin-top: 25px;border-bottom: 1px solid #EDEDED;padding-bottom: 15px;}
+			.jt123{width: 6px;}
+			.w_input{border: 1px solid #c8cccf;border-radius: 4px;outline: none;font-size: 12px;padding:0 5px;}
+		</style>
+	</head>
+	<body>
+		<div id="app" v-cloak>
+		
+			<div class="">
+				<a><span style="color: #000;">返回</span></a>
+				<button @click="addAcc" class="fabu">添加</button>
+			</div>
+			
+			<div class="input_div flex" style="padding: 15px 0;display: flex;">
+				<span style="color: #4C526C;">账号：</span>
+				<p @click="selectp(1)" class="flexs" style="flex: 1;"><span style="flex: 1;color: #000000;">{{selAcc}}</span><img class="jt123" src="http://m.lianzhigou.cn/public/images/arrow.png" ></p>
+			</div>
+			<div class="flexs input_div" style="padding: 15px 0;display: flex;">
+				<span style="color: #4C526C;margin-top: 5px;">链接：</span>
+				<input class="w_input" v-model="link" placeholder="请输入链接" style="margin-left:50px;display: flex;flex:1;"></input>
+			</div>
+			<div @click="openTime()"  class="flexs input_div" style="padding: 15px 0;display: flex;">
+				<span style="color: #4C526C;margin-top: 5px;">时间：</span>
+				<p class="flexs" style="flex: 1;"><span style="margin-left:50px;flex: 1;color: #000000;">{{time}}</span><img class="jt123" src="http://m.lianzhigou.cn/public/images/arrow.png" ></p>
+			</div>
+			<van-popup v-model="showTime" position="top">
+				<van-datetime-picker
+				  v-model="currentDate"
+				  type="datetime"
+				  :min-date="minDate"
+				  :max-date="maxDate"
+				  @confirm="changeMon" @cancel="cancel"
+				/>
+			</van-popup>
+			<van-action-sheet v-model="selshow" :actions="actions" :description="whichPage" @select="onSelect" />
+			
+		</div>
+		<div style="text-align:center"><audio id="audio" src="" autoplay="autoplay" controls="controls"  style="float: left;margin-left: 20px;margin-top: 10px;display:none"></audio></div>
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vant@2.4/lib/vant.min.js"></script>
+	<script>
+		var user="";
+		user=getCookie("userId")+"";
+		var userNick=decodeURI(decodeURI(getCookie("userNick")+""));
+		var userAddr=decodeURI(decodeURI(getCookie("userAddr")+""));
+		//document.getElementById("location").value=userAddr;
+		if(user){
+		}else{
+			vant.Toast("请先登录");
+			window.location="http://www.duola.vip/duola/login.html";
+		}
+		
+		function GetQueryString(name)
+		{
+			 var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+			 var r = window.location.search.substr(1).match(reg);
+			 if(r!=null)return  unescape(r[2]); return null;
+		}
+		
+		//var url=window.location+"";
+		var id=GetQueryString("id");
+		
+		var localNames=[];//上传前的文件名集合
+		var serverNames=[];//上传到服务器返回的文件名集合
+		
+		var app=new Vue({
+			el:'#app',
+			data:{
+				user:user,
+				time:'',
+				
+				accId:'22760641',
+				selAcc:'人民日报',
+				
+				link:'',
+				selshow:false,
+				actions: [],
+				checked:true,
+				whichPage:'',
+				showTime:false,
+				minDate:new Date(2010,9,1),
+				maxDate:new Date(),
+				currentDate:new Date()
+			},
+			created:function(){
+				this.time=formatW2(new Date()+"");
+			},
+			methods:{
+				changeMon: function(val) {
+					let year = val.getFullYear()
+					let month = addZero(val.getMonth() + 1)
+					let day = addZero(val.getDate())
+					let hour = addZero(val.getHours())
+					let minute = addZero(val.getMinutes())
+					let sec = addZero(val.getSeconds())
+					//console.log(year + '-' + month)
+					console.log(sec)
+					let t = year + '-' + month+'-'+day+' '+hour+':'+minute+':16';
+					app.time = t;
+					
+					app.showTime = false;
+				},
+				cancel() {
+					app.showTime = false;
+				},
+				openTime:function(){
+					//console.log(app.showTime);
+					app.showTime=true;
+					//console.log(app.showTime);
+				},
+				selectp(type){
+					if(type==1){
+						app.whichPage="请选择账号";
+						app.actions=[{id:22760641,name:"人民日报"},{id:57453563,name:"十点人物志"}];
+					}
+					this.selshow=true
+				},onSelect(item) {
+				      // 默认情况下点击选项时不会自动收起
+				      // 可以通过 close-on-click-action 属性开启自动收起
+				      this.selshow = false;
+					  this.selAcc=item.name;
+					  this.accId=item.id;
+				      vant.Toast(item.name);
+				},addAcc(){
+					//校验
+					if(!this.selAcc){
+						vant.Toast("账号必须选择");
+						return;
+					}
+					if(!this.link){
+						vant.Toast("链接必须输入");
+						return;
+					}
+					
+					let param = new FormData();
+					param.append('acc',this.selAcc);
+					param.append('acc_id',this.accId);
+					param.append('url',this.link);
+					param.append('time',this.time);
+					axios.get('http://www.duola.vip/WechatServlet?acc_id='+this.accId+'&url='+this.link+'&time='+this.time
+					,{ headers:{ 'Content-Type':'multipart/form-data' }},
+					  )
+					  .then(function (response) {
+					    console.log(response.data);
+						
+					  })
+					  .catch(function (error) {
+					    console.log(error);
+					  });
+					  vant.Toast("添加成功");
+				}
+			}
+		})
+	</script>
+	</body>
+</html>

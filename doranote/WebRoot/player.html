@@ -1,0 +1,114 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>哆啦网播放器</title>
+    <meta name="keywords" content="keyword1,keyword2,keyword3">
+    <meta name="description" content="this is my page">
+    <meta name="content-type" content="text/html; charset=UTF-8">
+    <link rel="Shortcut Icon" href="http://img.duola.vip/image/logo/dlam.jpg" />
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="hui/lib/Hui-iconfont/1.0.8/iconfont.css"/>
+    <link rel="stylesheet" type="text/css" href="hui/diary/css/player.css"/>
+    <link rel="stylesheet" type="text/css" href="hui/diary/css/index.css"><!-- 回顶部，歌曲选择框-->
+	<script type="text/javascript" src="hui/diary/js/jquery.js"></script>
+	<script type="text/javascript" src="hui/static/h-ui/js/H-ui.min.js"></script><!-- $.cookie()所在js -->
+	<script type="text/javascript" src="hui/static/h-ui.admin/js/H-ui.admin.js"></script>
+	<script type="text/javascript" src="hui/diary/js/jsutil.js"></script>
+	<script type="text/javascript" src="hui/diary/js/player.js"></script>
+	
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vant@2.4/lib/index.css">
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vant@2.4/lib/vant.min.js"></script>
+  </head>
+  
+  <body onunload="closeWindow()" id="body" style="background:url(http://img.duola.vip/image/back/back1.jpg)">
+    <div class="logo"><a href="http://www.duola.vip" target="_blank">哆啦网播放器</a></div>
+    <span class="topmenu" onclick="changeSkin()" title="alt+B键切换背景"><i class="Hui-iconfont" style="font-size:18px">&#xe62a;</i></span>
+    <span class="topmenu" onclick="openMusic()" title="alt+S键搜索歌曲"><i class="Hui-iconfont" style="font-size:18px">&#xe709;</i></span>
+    <audio id="audio" src="" autoplay="autoplay" controls="controls" style="display:none;float: left;margin-left: 20px;margin-top: 10px;"></audio>
+    <span id="lyric" style="color: green;cursor:all-scroll;font-size:15px;position:fixed;top:635px;right:346px;"></span>
+    <div class="audioType">
+    	<p style="display:block" onclick="loadAudio(0)" title="加载热播歌曲">
+    		<span id="hotPlayBtn">
+    		<i class="Hui-iconfont" style="font-size:13px">&#xe6c1;</i>
+    		</span>
+    		<span id="hotPlaynum" style="font-size:12px"></span>
+    	</p>
+    	<p style="display:block" onclick="loadAudio(1)" title="加载歌曲列表">
+    		<span id="songsBtn"><img style='width: 16px;height: 16px' src='http://img.duola.vip/image/playing.gif'/></span>
+    	    <span id="songnum" style="font-size:12px"></span>
+    	</p>
+    	<p style="display:block" onclick="loadAudio(2)" title="加载音频列表">
+    		<span id="audiosBtn">
+    		<i class="Hui-iconfont" style="font-size:15px">&#xe6a5;</i>
+    		</span>
+    		<span id="audionum" style="font-size:12px"></span>
+    	</p>
+    </div>
+    <div class="songList" >
+    	<table>
+	    	<thead>
+	    		<tr>
+	    		    <th style="width:13%;">序号<i class='Hui-iconfont' title='清空播放列表' onclick="removeSong()">&#xe609;</i></th>
+	    		    <th class="songNameOrTitle" style="width:23%;padding-right:108px">歌曲</th>
+	    		    <th class="singerOrWritter" style="width:22%;padding-right:48px">歌手</th>
+	    		    <th style="width:13%;padding-right:48px">来源</th>
+	    		    <th style="width:13%;padding-right:8px">时长</th>
+	    		    <th style="width:13%;padding-right:8px">操作</th>
+	    		</tr>
+	    	</thead>
+	    	<tbody class="songs">
+	    		
+	    	</tbody>
+    	</table>
+    	<img id="emptyIcon" style="display:none;margin-left: 260px;margin-top: 60px;" src="http://img.duola.vip/image/empty.png">
+    </div>
+    <div id="searchSong" style="cursor:pointer;position:fixed;overflow:scroll;background:#3CBC8D;right:66px;top:200px;width:240px;height:350px;display: none">
+       	<span onclick="closeSearch()" style="color:black;margin-left: 210px;">X</span>
+       	<input id="key" name="key" type="text" oninput="searchMusic(2)" placeholder="输入你要搜索的歌曲">
+       	<div id="songsList">
+       		<br><br><br><br>列表最多展示10首歌曲，若搜不到你想选择的歌曲，可联系站长添加歌曲
+       	</div>
+    </div>
+     <div id="alyric" style=""></div>
+    <!-- 其他工具#3f4156：上一曲，下一曲，播放暂停，进度条，音量加减，播放列表显示与隐藏按钮 -->
+	<div id="bottom" style="background: #009688;position:fixed;bottom:0;width:100%;height:50px;left:1px;right:10px">
+		<div style="margin-top: 5px;margin-left: 200px">
+			<img style="width: 30px;height: 30px;margin-bottom:5px;left:50px;" title="alt+左键--上一曲" onclick="preview()" alt="" src="http://img.duola.vip/image/play_previous.png">&emsp;
+			<img style="width: 30px;height: 30px;margin-bottom:5px;" title="alt+P键--暂停/播放" id="pause" alt="" onclick="pause_play()" src="http://img.duola.vip/image/play.png">&emsp;
+		    <img style="width: 30px;height: 30px;margin-bottom:5px;" title="alt+右键--下一曲" onclick="next()" alt="" src="http://img.duola.vip/image/play_next.png">
+			<img id="mode" title="顺序播放--alt+C键切换" style="width:30px;height:40px;" src="http://img.duola.vip/image/play_order.png" onclick="change()">
+			<progress title="alt+A键---快退10秒,alt+D键---快进10秒;alt+Q键---快退5秒,alt+E键---快进5秒" style="width:566px;height:10px;margin-bottom: 18px" draggable="false" id="pro" value="0" max="100"></progress>
+			<span id="time"  class="time" title="已播放/总时长" style="color:white;padding-bottom: 16px;"></span>&emsp;
+			<a onclick="minus()" style="padding-bottom: 16px;" class="minus" title="alt+下键--音量减">一</a>&emsp;
+			<progress style="width:90px;margin-bottom: 14px;" draggable="false" id="voice" value="100" max="100"></progress>&emsp;
+			<a onclick="add()" style="padding-bottom: 16px;" class="add" title="alt+上键--音量加">✚</a>&emsp;
+			<i class="Hui-iconfont" id="lock" onclick="fixBottom()" style="font-size: 15px;display: inline-block;">&#xe605;</i>
+			<i class="Hui-iconfont"  id="unlock" onclick="unfixBottom()" style="font-size: 15px;display:none">&#xe60e;</i>
+		</div>
+	</div>
+    <script type="text/javascript">
+   		
+    	//window.addEventListener("mousemove",hideBottom);
+    	
+    	/* window.onbeforeunload = function(){
+			
+		} 
+    	
+    	$(function(){
+		  　　$(window).unbind('beforeunload');
+		  　　window.onbeforeunload = null;
+		  　})
+		   window.οnbefοreunlοad=function (){
+    		setCookie("showPlayer","0");
+			console.log("===οnbefοreunlοad==="); 
+			if(event.clientX>document.body.clientWidth && event.clientY < 0 || event.altKey){ 
+				alert("你关闭了浏览器"); 
+			}else{ 
+				alert("你正在刷新页面"); 
+			} 
+   		}
+    	*/
+    </script>
+  </body>
+</html>

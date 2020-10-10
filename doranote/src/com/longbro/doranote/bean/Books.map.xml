@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.longbro.doranote.bean.Books">
+	<resultMap id="Books" type="com.longbro.doranote.bean.Books">
+		<result property="BId" column="b_id" jdbcType="NUMERIC"/>
+		<result property="BBookid" column="b_bookId" jdbcType="NUMERIC"/>
+		<result property="scale" column="b_scale" jdbcType="NUMERIC"/>
+		<result property="BType" column="b_type" jdbcType="NUMERIC"/>
+		<result property="BWriter" column="b_writer" jdbcType="VARCHAR"/>
+		<result property="diaryNum" column="b_diary_num" jdbcType="NUMERIC"/>
+		<result property="BDescription" column="b_description" jdbcType="VARCHAR"/>
+		<result property="BCover" column="b_cover" jdbcType="VARCHAR"/>
+		<result property="BTime" column="b_time" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<insert id="create" parameterType="com.longbro.doranote.bean.Books">
+		INSERT INTO d_books
+		(b_id,b_bookId,b_type,b_writer,b_description,b_cover,b_time)
+		VALUES 
+		(#{BId,jdbcType=NUMERIC}, #{BBookid,jdbcType=NUMERIC}, #{BType,jdbcType=NUMERIC}, #{BWriter,jdbcType=VARCHAR}, #{BDescription,jdbcType=VARCHAR}, #{BCover,jdbcType=VARCHAR}, #{BTime,jdbcType=VARCHAR})
+	</insert>
+	
+	<select id="get"   parameterType="java.lang.String" resultMap="Books">
+		SELECT * FROM d_books 
+		WHERE 
+		id=#{id}
+	</select>
+	
+	<select id="query" parameterType="java.util.Map" resultMap="Books">
+		SELECT * FROM d_books
+		<where>
+			<if test="@Ognl@isNotEmpty(whereSql)">
+				${whereSql}
+			</if>
+		</where>
+		<if test="@Ognl@isNotEmpty(orderBySql)">
+			ORDER BY ${orderBySql}
+		</if>
+		<if test="@Ognl@isEmpty(orderBySql)">
+			ORDER BY id DESC
+		</if>
+	</select>
+	
+	<update id="update" parameterType="com.longbro.doranote.bean.Books">
+		UPDATE d_books
+        <set>
+			<if test="BType != null">
+				b_type=#{BType,jdbcType=NUMERIC},
+			</if>
+			<if test="BWriter != null">
+				b_writer=#{BWriter,jdbcType=VARCHAR},
+			</if>
+			<if test="BDescription != null">
+				b_description=#{BDescription,jdbcType=VARCHAR},
+			</if>
+			<if test="BCover != null">
+				b_cover=#{BCover,jdbcType=VARCHAR},
+			</if>
+			<if test="BTime != null">
+				b_Time=#{BTime,jdbcType=VARCHAR}
+			</if>
+		</set>
+		WHERE
+		b_bookId=#{BBookid,jdbcType=NUMERIC}
+	</update>
+	
+	<delete id="remove" parameterType="java.lang.String">
+		DELETE FROM d_books 
+		WHERE
+		id=#{id}
+	</delete>
+	
+	<select id="getBooksByAuthor" resultMap="Books">
+		select db.b_description,db.b_bookId,db.b_scale,
+			   db.b_cover,COUNT(dd.n_Id) b_diary_num,db.b_time
+		from d_books db 
+		LEFT JOIN d_diary dd on db.b_bookId=dd.n_BookId
+		where b_writer=#{author}
+		GROUP BY db.b_bookId
+		UNION 
+		SELECT "零散日记" b_description,0 b_bookId,1000000 b_scale,"cover2" b_cover,COUNT(n_Id) b_diary_num,"" b_time
+		FROM d_diary 
+		WHERE IFNULL(n_BookId,'')='' AND n_Writter=#{author}
+	</select>
+	
+	
+</mapper>

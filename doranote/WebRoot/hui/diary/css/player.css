@@ -1,0 +1,61 @@
+body{
+	background:#292a2b;
+}
+.logo{
+	color:pink;
+	margin-left:20px;
+	margin-top:22px;
+    font-size:30px;
+    font-family: 'Arizonia', cursive;
+    text-shadow:#fff 1px 1px 1px;
+}
+.logo  a{
+      color:white;
+      -webkit-transition: all 0.5s; 
+      -moz-transition: all 0.5s; 
+      -o-transition: all 0.5s;
+      text-decoration: none;
+  }
+.topmenu{
+	float:right;
+	font-size:20px;
+	padding-right: 20px;
+	cursor: pointer;
+	color:white;
+}
+.audioType{
+	float:left;
+	font-size:20px;
+	cursor: pointer;
+	margin-top:160px;
+	margin-right:33px;
+	color:white;
+}
+.audioType p{
+	padding-left: 20px;
+}
+.songList{
+	max-width:800px;
+	float:left;
+	margin-top:33px;
+	color:white;
+	cursor: pointer;
+}
+
+#alyric{
+	color:white;
+	margin-left:20px;
+	margin-top:100px;
+	font-size:13px;
+	width:300px;
+	height:470px;
+	overflow:scroll;
+	float:right;
+	margin-right:140px;
+}
+#alyric::-webkit-scrollbar {
+   	display: none;
+}
+thead th{
+	font-size:12px;
+}

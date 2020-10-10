@@ -1,0 +1,97 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+	<title>哆啦网-记录你生活的点点滴滴</title>
+	<meta name="keywords" content="哆啦网,哆啦日记首页,哆啦日记">
+	<meta name="description" content="哆啦网,是一个以记录生活、工作、心情等为主题的网站,记录形式主要以文本、音频为主;它不仅仅是怀旧,更想为你记录你生活的点点滴滴。哆啦日记，做全网最有意思、最有用的日记记录网站。">
+	<meta charset="utf-8">
+	<meta name="renderer" content="webkit|ie-comp|ie-stand">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+	<meta http-equiv="Cache-Control" content="no-siteapp" />
+	<link rel="Bookmark" href="/favicon.ico" >
+	<link rel="Shortcut Icon" href="http://v.duola.vip/image/logo/dlam.jpg" />
+	<link rel="stylesheet" type="text/css" href="hui/lib/Hui-iconfont/1.0.8/iconfont.css" />
+	<link rel="stylesheet" type="text/css" href="hui/diary/css/index1.css">
+	<link rel="stylesheet" type="text/css" href="hui/diary/css/index2.css"><!-- 首页 -->
+	<link rel="stylesheet" type="text/css" href="hui/diary/css/index.css"><!-- 回顶部 -->
+	<script type="text/javascript" src="jsl/index.js"></script>
+	<style type="text/css">
+		body{
+			clear: both;
+		}
+		.header{
+			background: black;
+			height: 66px;
+			color:white;
+		}
+		.header .logo{
+			font-size:23px;
+			padding-top:18px;
+			margin-left: 22px;
+		}
+		.logo .smallLogo{
+			font-size:13px;
+			margin-left: 15px;
+		}
+		.container{
+			float: left;
+			padding-left:22px;
+			width: 60%;
+		}
+	</style>
+</head>
+<body id="bodys" style="background:url(http://v.duola.vip/image/back/back3.jpg)">
+	<div class="header">
+		<div class="logo"><span style="">哆啦网</span><span class="smallLogo">Doranote</span></div>
+		
+	</div>
+	<div class="container">
+		<div class="pages" style="cursor: pointer;">
+		</div>
+		<div class="diarys" id="diarys">
+			<div class="diary" >
+				<center><img alt="" src="http://v.duola.vip/image/loading.gif" style="width: 88px;height: 88px;"></center>
+				<center><span style="color:blue;font-size: 20px;margin-top: 20px;">数据加载中，客官请稍后^_^<br></span></center>
+			</div>
+		</div>
+		<div class="pages" style="cursor: pointer;">
+		</div>
+	</div>
+
+	<script type="text/javascript" src="hui/lib/jquery/1.9.1/jquery.min.js"></script> 
+	<script type="text/javascript">
+		$(".login").on("click", login_popup),function() {
+		    var e = [];
+		    $(".modal").on("show.bs.modal",
+		    function() {
+		        for (var s = 0; e.length > s; s++) e[s] && (e[s].modal("hide"), e[s] = null);
+		        e.push($(this));
+		        var o = $(this),
+		        a = o.find(".modal-dialog"),
+		        t = $('<div style="display:table; width:100%; height:100%;"></div>');
+		        t.html('<div style="vertical-align:middle; display:table-cell;"></div>'),
+		        t.children("div").html(a),
+		        o.html(t)
+		    })
+		} ();
+		var author='';
+		var user=getCookie("userId")+"";//当前登录用户
+		var perPageNum=0;//已登录用户设置的显示日记篇数
+		var perPage=10;//默认每页显示日记篇数
+		$(function(){
+			//loadNotice();//index.js中
+			if(user!=""){//需放到加载日记之前，以实现是否显示日记字数的设定
+				//getSetting(user);//加载登录用户的设置
+			}
+			if(perPageNum!="0"){
+				perPage=perPageNum;
+			}
+			loadDiary('index','','1',perPage,user);//分页加载日记，12-05使用user去除黑名单
+			//switchTab(2);//使用此处替换了上方的调用loadDiary
+			//monitor();//手机访问时隐藏左边栏目
+			//loadAllUser();//首页加载推荐用户
+		});
+	</script>
+</body>
+</html>

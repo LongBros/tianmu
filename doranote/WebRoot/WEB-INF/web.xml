@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="WebApp_ID" version="3.0">
+  <display-name>doranote</display-name>
+  <servlet>
+    <servlet-name>spring</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <init-param>
+      <param-name>contextConfigLocation</param-name>
+      <param-value>/WEB-INF/config/spring.xml</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <!-- Timer方式定时器，暂不采用SpringTask方式=========start -->
+  <servlet>
+    <servlet-name>SyncServlet</servlet-name>
+    <servlet-class>com.longbro.doranote.job.SyncServlet</servlet-class>
+    <load-on-startup>2</load-on-startup>
+  </servlet>
+  <!-- Timer方式定时器，暂不采用SpringTask方式=========end -->
+  <context-param>
+    <param-name>webAppRootKey</param-name>
+    <param-value>webapp.root</param-value><!-- webapp.root可随意配置，log4j.xml中要与其保持一致 -->
+  </context-param>
+  <!-- 配置日志输出========start -->
+  <context-param>
+    <param-name>log4jConfigLocation</param-name>
+    <param-value>/WEB-INF/config/log4j.xml</param-value>
+  </context-param>
+  <listener>
+    <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
+  </listener>
+  <!-- 配置日志输出========end -->
+  <servlet-mapping>
+    <servlet-name>spring</servlet-name>
+    <url-pattern>/</url-pattern><!-- *.do -->
+  </servlet-mapping>
+  <!-- 解决跨域问题========start -->
+  <filter>
+  	<filter-name>header</filter-name>
+  	<filter-class>com.longbro.doranote.filter.HeaderFilter</filter-class>
+  </filter>
+  <filter-mapping>
+  	<filter-name>header</filter-name>
+  	<url-pattern>/*</url-pattern>
+  </filter-mapping>
+  
+  <servlet>
+    <servlet-name>WechatServlet</servlet-name>
+    <servlet-class>com.longbro.doranote.servlet.WechatServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>WechatServlet</servlet-name>
+    <url-pattern>/WechatServlet</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>AddPlayRecordServlet</servlet-name>
+    <servlet-class>com.longbro.doranote.servlet.AddPlayRecordServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AddPlayRecordServlet</servlet-name>
+    <url-pattern>/AddPlayRecordServlet</url-pattern>
+  </servlet-mapping>
+  
+  <!-- 解决跨域问题========end -->
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+    <welcome-file>index.htm</welcome-file>
+    <welcome-file>index.jsp</welcome-file>
+    <welcome-file>default.html</welcome-file>
+    <welcome-file>default.htm</welcome-file>
+    <welcome-file>default.jsp</welcome-file>
+  </welcome-file-list>
+</web-app>
