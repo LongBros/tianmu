@@ -13,8 +13,8 @@
 	<script type="text/javascript" src="hui/diary/js/jquery.js"></script>
 	<script type="text/javascript" src="hui/static/h-ui/js/H-ui.min.js"></script><!-- $.cookie()所在js -->
 	<script type="text/javascript" src="hui/static/h-ui.admin/js/H-ui.admin.js"></script>
-	<script type="text/javascript" src="hui/diary/js/jsutil.js"></script>
-	<script type="text/javascript" src="hui/diary/js/player.js"></script>
+	<script type="text/javascript" src="js/jsutil.js"></script>
+	<script type="text/javascript" src="js/player.js"></script>
 	
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vant@2.4/lib/index.css">
 	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
@@ -25,25 +25,39 @@
     <div class="logo"><a href="http://www.duola.vip" target="_blank">哆啦网播放器</a></div>
     <span class="topmenu" onclick="changeSkin()" title="alt+B键切换背景"><i class="Hui-iconfont" style="font-size:18px">&#xe62a;</i></span>
     <span class="topmenu" onclick="openMusic()" title="alt+S键搜索歌曲"><i class="Hui-iconfont" style="font-size:18px">&#xe709;</i></span>
+    <!-- <span class="topmenu" onclick="oacRecommend('close')" id="randomRecom" title="开启随机推荐"><i class="Hui-iconfont" style="font-size:18px">&#xe65e;</i></span> -->
+    <span class="topmenu" onclick="inputSong()" title="录歌"><i class="Hui-iconfont" style="font-size:18px">&#xe716;</i></span>
     <audio id="audio" src="" autoplay="autoplay" controls="controls" style="display:none;float: left;margin-left: 20px;margin-top: 10px;"></audio>
     <span id="lyric" style="color: green;cursor:all-scroll;font-size:15px;position:fixed;top:635px;right:346px;"></span>
     <div class="audioType">
-    	<p style="display:block" onclick="loadAudio(0)" title="加载热播歌曲">
+    	<p style="display:block" onclick="loadAudio(4)" title="随机推荐歌曲">
+    		<span id="ranRecomBtn">
+    		<i class="Hui-iconfont" style="font-size:13px">&#xe6d0;</i>
+    		</span>
+    		<span id="ranRecomnum" style="font-size:12px"></span>
+    	</p>
+    	<p style="display:block" onclick="loadAudio(0)" title="热播歌曲">
     		<span id="hotPlayBtn">
     		<i class="Hui-iconfont" style="font-size:13px">&#xe6c1;</i>
     		</span>
     		<span id="hotPlaynum" style="font-size:12px"></span>
     	</p>
-    	<p style="display:block" onclick="loadAudio(1)" title="加载歌曲列表">
+    	<p style="display:block" onclick="loadAudio(1)" title="哆啦网的歌曲列表">
     		<span id="songsBtn"><img style='width: 16px;height: 16px' src='http://img.duola.vip/image/playing.gif'/></span>
     	    <span id="songnum" style="font-size:12px"></span>
     	</p>
-    	<p style="display:block" onclick="loadAudio(2)" title="加载音频列表">
+    	<p style="display:block" onclick="loadAudio(2)" title="哆啦网的音频列表">
     		<span id="audiosBtn">
     		<i class="Hui-iconfont" style="font-size:15px">&#xe6a5;</i>
     		</span>
     		<span id="audionum" style="font-size:12px"></span>
     	</p>
+    	<!-- <p style="display:block" onclick="loadAudio(3)" title="加载歌单">
+    		<span id="listBtn">
+    		<i class="Hui-iconfont" style="font-size:15px">&#xe68b;</i><span style="color:blue"></span>
+    		</span>
+    		<span id="listnum" style="font-size:12px"></span>
+    	</p> -->
     </div>
     <div class="songList" >
     	<table>
@@ -58,9 +72,10 @@
 	    		</tr>
 	    	</thead>
 	    	<tbody class="songs">
-	    		
+	    			    	
 	    	</tbody>
     	</table>
+    	
     	<img id="emptyIcon" style="display:none;margin-left: 260px;margin-top: 60px;" src="http://img.duola.vip/image/empty.png">
     </div>
     <div id="searchSong" style="cursor:pointer;position:fixed;overflow:scroll;background:#3CBC8D;right:66px;top:200px;width:240px;height:350px;display: none">

@@ -33,21 +33,13 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	<link rel="stylesheet" type="text/css" href="hui/lib/Hui-iconfont/1.0.8/iconfont.css" />
 	<link rel="stylesheet" type="text/css" href="hui/static/h-ui.admin/skin/default/skin.css" id="skin" />
 	<link rel="stylesheet" type="text/css" href="hui/static/h-ui.admin/css/style.css" />
-	<script type="text/javascript" src="hui/diary/js/jsutil.js"></script>
+	<script type="text/javascript" src="js/jsutil.js"></script>
 	<script type="text/javascript" src="hui/diary/js/jquery.js"></script>
-	<script type="text/javascript" src="hui/diary/js/index.js"></script><!-- 获取当前登录用户 -->
-	<script type="text/javascript" src="hui/diary/js/timeDeal.js"></script><!-- 时间处理函数 -->
-	<script type="text/javascript" src="hui/diary/js/new.js"></script><!-- 评论使用到 -->
-	<script type="text/javascript" src="hui/diary/js/diary.js"></script>
-	<!-- <script>
-		var _hmt = _hmt || [];
-		(function() {
-		  var hm = document.createElement("script");
-		  hm.src = "https://hm.baidu.com/hm.js?fb8b6c4bfcc9d7e1b2a00a9ab9dd9a34";
-		  var s = document.getElementsByTagName("script")[0]; 
-		  s.parentNode.insertBefore(hm, s);
-		})();
-	</script> -->
+	<script type="text/javascript" src="js/index.js"></script><!-- 获取当前登录用户 -->
+	<script type="text/javascript" src="js/timeDeal.js"></script><!-- 时间处理函数 -->
+	<script type="text/javascript" src="js/new.js"></script><!-- 评论使用到 -->
+	<script type="text/javascript" src="js/diary.js"></script>
+	<script type="text/javascript" src="js/baidu.js"></script>
   </head>
   <style type="text/css">
 	.contents{

@@ -29,6 +29,7 @@ import com.google.gson.Gson;
 import com.longbro.doranote.BaseResult;
 import com.longbro.doranote.bean.Diary;
 import com.longbro.doranote.bean.NoteBook;
+import com.longbro.doranote.job.DoraTimerJob;
 import com.longbro.doranote.service.NoteBookService;
 import com.longbro.doranote.util.FileProduce;
 import com.longbro.doranote.util.ImageProduce;
@@ -532,5 +533,10 @@ public class NoteBookController{
     	result.setMessage("成功批量获取日记");
     	result.setResult(list);
     	return result;
+    }
+    @RequestMapping(value="spideDaily")
+    public void spideDaily() throws Exception{
+    	DoraTimerJob.spideDaily();
+    	DoraTimerJob.spideTenDaily();
     }
 }

@@ -7,9 +7,9 @@
 		<!-- 引入样式文件 -->
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vant@2.4/lib/index.css">
 		<link rel="stylesheet" type="text/css" href="css/base.css"/>
-		<script type="text/javascript" src="http://www.duola.vip/hui/diary/js/timeDeal.js"></script>
-		<script type="text/javascript" src="http://www.duola.vip/hui/diary/js/jsutil.js"></script>
-		<script type="text/javascript" src="http://www.duola.vip/hui/diary/js/index.js"></script>
+		<script type="text/javascript" src="http://www.duola.vip/js/timeDeal.js"></script>
+		<script type="text/javascript" src="http://www.duola.vip/js/jsutil.js"></script>
+		<script type="text/javascript" src="http://www.duola.vip/js/index.js"></script>
 		<style>
 			#app{margin: 15px;font-size: 15px;}
 			.fabu{float: right;outline: none;background-color: #8bd226;color: #fff;border: none;padding: 5px 18px;border-radius: 3px;}
@@ -22,7 +22,7 @@
 		<div id="app" v-cloak>
 		
 			<div class="">
-				<a><span style="color: #000;">返回</span></a>
+				<a><span @click="spide" style="color: #000;">爬取</span></a>
 				<button @click="addAcc" class="fabu">添加</button>
 			</div>
 			
@@ -164,6 +164,18 @@
 					    console.log(error);
 					  });
 					  vant.Toast("添加成功");
+				},spide(){
+					vant.Toast("开始爬取日记");
+					axios.get('http://www.duola.vip/note/diary/spideDaily'
+					,{ headers:{ 'Content-Type':'multipart/form-data' }},
+					  )
+					  .then(function (response) {
+					    console.log(response.data);
+					  })
+					  .catch(function (error) {
+					    console.log(error);
+					  });
+					vant.Toast("爬取日记结束");
 				}
 			}
 		})

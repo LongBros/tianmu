@@ -3,6 +3,7 @@
 	 //用户表添加‘是否开启你生日哆啦网送祝福字段’
 	 推荐模块取消随机推荐，改为推荐阅读量、点赞、收藏量高的
 	 SELECT n_Id,n_visit_num FROM d_diary ORDER BY n_visit_num DESC LIMIT 0,100
+	 歌曲的录入审核机制，报错反馈功能
 10-07
 完成录入待爬取页面的设计，接口使用老笨式servlet方式
 10-04

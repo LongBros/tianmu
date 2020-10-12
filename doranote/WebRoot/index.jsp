@@ -23,10 +23,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	<meta http-equiv="Cache-Control" content="no-siteapp" />
 	<link rel="Bookmark" href="/favicon.ico" >
 	<link rel="Shortcut Icon" href="http://img.duola.vip/image/logo/dlam.jpg" />
-	<!--[if lt IE 9]>
-	<script type="text/javascript" src="lib/html5shiv.js"></script>
-	<script type="text/javascript" src="lib/respond.min.js"></script>
-	<![endif]-->
 	<link rel="stylesheet" type="text/css" href="hui/diary/css/index1.css">
 	<link rel="stylesheet" type="text/css" href="hui/diary/css/index2.css"><!-- 首页 -->
 	<link rel="stylesheet" type="text/css" href="hui/diary/css/index.css"><!-- 回顶部 -->
@@ -37,14 +33,10 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	<link rel="stylesheet" type="text/css" href="hui/static/h-ui.admin/css/style.css" />
 	
 	<script type="text/javascript" src="hui/diary/js/jquery.js"></script>
-	<script type="text/javascript" src="hui/diary/js/index.js"></script>
-	<script type="text/javascript" src="hui/diary/js/index1.js"></script>
-	<script type="text/javascript" src="hui/diary/js/timeDeal.js"></script><!-- 时间处理函数 -->
-	<!--[if IE 6]>
-	<script type="text/javascript" src="lib/DD_belatedPNG_0.0.8a-min.js" ></script>
-	<script>DD_belatedPNG.fix('*');</script>
-	<![endif]-->
-
+	<script type="text/javascript" src="js/index.js"></script>
+	<script type="text/javascript" src="js/index1.js"></script>
+	<script type="text/javascript" src="js/timeDeal.js"></script><!-- 时间处理函数 -->
+	<script type="text/javascript" src="js/baidu.js"></script>
   </head>
   
   <body id="bodys" style="background:url(http://img.duola.vip/image/back/back3.jpg)">

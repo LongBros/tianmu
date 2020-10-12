@@ -181,8 +181,8 @@ function getCookie(name){
  * type	1:音频，2：歌曲
  */
 function playerAudio(sid,type){
-	console.log(">>"+sid)
-	console.log(">>"+type)
+	if(!sid)//部分用户可能家歌异常
+		return;
 	sid=sid+"";
 	var showPlayer=getCookie("showPlayer")+"";//播放页面是否已显示
 	console.log("播放器显示状态(0未显示，1已显示):"+showPlayer)
@@ -298,7 +298,14 @@ function searchMusic(from){
 		}
 	});
 }
-
+function random(min, max){
+	// 若max不存在 min 赋值给max,并重新赋值min
+	if(max == null){
+		max = min;  
+		min = 0;
+	}
+	return min+ Math.floor(Math.random()*(max-min+1))
+}
 /**
 *一些公用的函数方法
 *

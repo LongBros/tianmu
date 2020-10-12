@@ -9,7 +9,7 @@ var nowId='';//当前播放歌曲的资源id
 var lastPlay=0;//上一首播放的歌曲序号，在播放下一曲时，先将当前播放赋给此字段。涉及next、preview、playAudios（直接点击）等函数
 var nowplay=0;//当前播放歌曲的序号
 var mode="order";//播放模式---默认为顺序播放模式
-var thread=window.setInterval(loadSongList, 1000)
+var thread=window.setInterval("loadAudio(1)", 1000)
 var monitorThread=window.setInterval("monitor()", 1000);
 document.addEventListener("keydown", keydown);
 /**
@@ -17,15 +17,24 @@ document.addEventListener("keydown", keydown);
  * @param which	0:热播，1：歌曲播放列表，2：音频播放列表
  */
 function loadAudio(which){
-	if(which==0){
-		vant.Toast("暂不支持")
+	$(".songs").html('<img src="http://img.duola.vip/image/loading1.gif" style="width: 28px;height: 28px;margin-left:250px;margin-top:60px">');
+
+	var tabs=new Array("hotPlayBtn","songsBtn","audiosBtn","listBtn","ranRecomBtn");
+	var rawBtn=["&#xe6c1;","&#xe60f;","&#xe6a5;","&#xe68b;","&#xe6d0;"];
+	for(var i=0;i<5;i++){
+		if(i==which){
+			$("#"+tabs[i]).html("<img style='width: 16px;height: 16px' src='http://img.duola.vip/image/playing.gif'/>");
+		}else{
+			$("#"+tabs[i]).html("<i class='Hui-iconfont' style='font-size:15px'>"+rawBtn[i]+"</i>");
+		}
+	}
+	if(which==0){//加载热播歌曲
+		var n=random(10,20);
+		loadHotSongs(n)
+		vant.Toast("加载"+n+"首热播歌曲")
+		$("#hotPlaynum").html(n);
 	}else if(which==1){//加载歌曲
-//		if(what=="0"){
-	//		return;
-	//	}
 		console.log("loadSong:加载歌曲")
-		$("#songsBtn").html("<img style='width: 16px;height: 16px' src='http://img.duola.vip/image/playing.gif'/>");
-		$("#audiosBtn").html("<i class='Hui-iconfont' style='font-size:15px'>&#xe6a5;</i>");
 		window.clearInterval(thread);
 		thread=window.setInterval(loadSongList, 1000)
 		lastWhat=what;
@@ -33,21 +42,23 @@ function loadAudio(which){
 		songsLength=0;
 		lastSongsLength=0;
 	}else if(which==2){//加载音频
-//		if(what=="1"){
-//			return;
-//		}
 		console.log("loadAudio:加载音频")
-		$("#songsBtn").html("<i class='Hui-iconfont' style='font-size:13px;'>&#xe60f;</i>");
-		$("#audiosBtn").html("<img style='width: 16px;height: 16px' src='http://img.duola.vip/image/playing.gif'/>");
 		window.clearInterval(thread);
 		thread=window.setInterval(loadSongList, 1000)
 		lastWhat=what;
 		what="1";
 		songsLength=0;
 		lastSongsLength=0;
+	}else if(which==3){//加载歌单
+		vant.Toast("暂不支持")
+	}else if(which==4){//随机推荐歌曲
+		var n=random(10,20);
+		randomPList(n)
+		vant.Toast("已为你随机推荐"+n+"首歌曲")
+		$("#ranRecomnum").html(n);
 	}
-
 }
+
 //3.关闭窗口前修改cookie状态
 function closeWindow(){
 	setCookie("showPlayer","0");
@@ -119,13 +130,14 @@ function getCharNum(str,ch){
 }
 //6.异步加载音频详细信息
 function ajaxSongs(type){
+	$(".songs").html('')
 	if(songs.length==0||(songs.length==1&&songs[0]=="")){
 		document.getElementById("emptyIcon").style.display="block";
 		return;
 	}
 	vant.Toast("歌曲数量变化，重新加载回显歌曲")
 	var list='';
-	$(".songs").html('');
+	
 	for(var i=songs.length-1;i>=0;i--){
 		list+=","+songs[i];
 	}
@@ -139,112 +151,10 @@ function ajaxSongs(type){
 	
 	if(what=="0"){
 		vant.Toast("加载歌曲列表")
-		//加载歌曲列表
-		$.ajax({
-			type:"Get",
-			async:false,
-			url:"http://m.duola.vip/queryPListSong.do?pList="+list,
-			dataType:"Json",
-			success:function(data){
-				songInfo=data;
-				for(var k=0;k<data.length;k++){
-					var na=data[k].songName+"";
-					if(na.length>6){
-						na=na.substring(0, 5)+"...";
-					}
-//					na=na+"("+data[k].playNum+")";
-					var url="";//源网址
-					var id=data[k].sourceId+"";//网址标识部分
-					if(id.charAt(id.length-1)=="w"){//酷我音乐，需去掉后缀.kw
-						id=id.substring(0, id.length-3);
-					}
-					var singer=data[k].singer+"";
-					if(singer.length>6){
-						singer=singer.substring(0,5)+"...";
-					}
-					var web=data[k].website+"";
-					if(web=="QQ音乐"){
-						url="https://y.qq.com/n/yqq/song/"+id;
-					}else if(web=="网易云音乐"){
-						url="https://music.163.com/#/song?id="+id;
-					}else if(web=="酷我音乐"){
-						url="http://www.kuwo.cn/play_detail/"+id;
-					}
-					var website="";
-					if(web.indexOf("553")!=-1){
-						website="http://img.duola.vip/image/tx/88888888_1585987333364.jpg";
-					}else if(web.indexOf("QQ")!=-1){
-						website="https://y.qq.com/favicon.ico";
-					}else if(web.indexOf("网易云")!=-1){
-						website="http://p3.music.126.net/tBTNafgjNnTL1KlZMt7lVA==/18885211718935735.jpg";
-					}else if(web.indexOf("酷我音乐")!=-1){
-						website="http://image.kuwo.cn/website/favicon.ico";
-					}else{
-						website="http://img.duola.vip/image/tx/88888888_1585987333364.jpg";
-					}
-					var dura=data[k].duration+"";
-					if(data&&dura.length==5){
-						dura=data[k].duration;
-					}else{
-						dura='--:--';
-					}
-					$('.songs').append("<tr style='' onmouseout=\"hidePlayBtn(this,"+data[k].id+")\" onmouseover=\"showPlayBtn(this,"+data[k].id+")\" ondblclick='playAudios(1,"+k+",\""+data[k].sourceId+"\")' id='songName"+k+"'>" +
-							"<td style='width:13%;padding-left:33px;' id='xu"+k+"'>"+(k+1)+"&emsp;</td>" +
-							"<td style='width:23%;'><span><a title='"+data[k].songName+"'>"+na+"</a>" +
-							"&nbsp;<span style='visibility:hidden;' id='playBtn"+data[k].id+"'>" +
-							"<i class='Hui-iconfont' onclick='playAudios(1,"+k+",\""+data[k].sourceId+"\")'>&#xe6e6;</i>" +
-							"&nbsp;<i class='Hui-iconfont' onclick='removeSong("+(data.length-k)+")'>&#xe609;</i>"+
-							"&nbsp;<i class='Hui-iconfont' onclick='addToSongList(0,"+data[k].id+")'>&#xe604;</i>"+
-							"</span></span></td>" +
-							
-							"<td style='width:22%;padding-left:33px'><a onclick=\"\" title='"+data[k].singer+"'>"+singer+"</a></td>" +
-							"<td style='width:13%;padding-left:10px'><a href='"+url+"'  target='_blank'><img width='14px' height='14px' src='"+website+"'></a></td>" +
-							"<td style='width:13%;padding-left:20px'>"+dura+"</td>"+
-							"<td style='width:13%;padding-left:30px'><i onclick='editDiary("+data[k].id+")' class='Hui-iconfont'>&#xe60c;</i></td></tr>");
-					$(".songNameOrTitle").html('歌名');
-					$(".singerOrWritter").html('歌手')
-				}
-			}
-		});
+		ajaxLoadSongs(list,0);
 	}else{
 		vant.Toast("加载音频列表")
-		$.ajax({
-			type:"Post",
-			async:false,
-			url:"http://www.duola.vip/note/diary/getAudioByIds.do",
-			data:{
-				ids:list
-			},
-			dataType:"Json",
-			success:function(data){
-				songInfo=data.result;
-				for(var k=0;k<songInfo.length;k++){
-					var na=songInfo[k].ntitle+"";
-					if(na.length>8){
-						na=na.substring(0, 8)+"...";
-					}
-					$('.songs').append("<tr style='' ondblclick='playAudios(1,"+k+",\""+songInfo[k].nSongId+"\")' onmouseout=\"hidePlayBtn(this,"+songInfo[k].nid+")\" onmouseover=\"showPlayBtn(this,"+songInfo[k].nid+")\" id='songName"+k+"'>" +
-							"<td style='width:13%;padding-left:33px;' id='xu"+k+"'>"+(k+1)+"&emsp;</td>" +
-							"<td style='width:33%;'><span>" +
-							"<a title='"+songInfo[k].ntitle+"'>"+na+"</a>" +
-							"&nbsp;<span style='visibility:hidden;' id='playBtn"+songInfo[k].nid+"'>" +
-							"<i class='Hui-iconfont' onclick='playAudios(1,"+k+",\""+songInfo[k].nSongId+"\")'>&#xe6e6;</i>" +
-							"&nbsp;<i class='Hui-iconfont' onclick='removeSong("+(songInfo.length-k)+")'>&#xe609;</i>"+
-							"&nbsp;<i class='Hui-iconfont' onclick='addToSongList(1,"+songInfo[k].nid+")'>&#xe604;</i>"+
-							"</span></span></td>" +
-							
-							"<td style='width:22%;padding-left:33px'><a onclick=\"\" title='"+songInfo[k].userName+"'>"+songInfo[k].userName+"</a></td>" +
-							"<td style='width:13%;padding-left:13px'><a href='http://www.duola.vip/diary/"+songInfo[k].nid+"'  target='_blank'><img width='14px' height='14px' src='http://img.duola.vip/image/logo/dlam.jpg'></a></td>"+
-							"<td style='width:13%;padding-left:20px'>--</td>"+
-							"<td style='width:13%;padding-left:30px'></td>"+
-					"</tr>");
-					$(".songNameOrTitle").html('标题');
-					$(".singerOrWritter").html('作者');
-					$("#alyric").html('');
-					$("#lyric").html('');
-				}
-			}
-		});
+		ajaxLoadAudio(list)
 	}
 //	console.log("songInfo:"+songInfo)
 	if(songInfo.length==0){
@@ -261,6 +171,121 @@ function ajaxSongs(type){
 			playAudios(2,last,songInfo[last].nSongId)
 	}
 }
+function ajaxLoadSongs(list,which){
+	//加载歌曲列表
+	$.ajax({
+		type:"Get",
+		async:false,
+		url:"http://m.duola.vip/queryPListSong.do?pList="+list,
+		dataType:"Json",
+		success:function(data){
+			songInfo=data;
+			for(var k=0;k<data.length;k++){
+				var na=data[k].songName+"";
+				if(na.length>6){
+					na=na.substring(0, 5)+"...";
+				}
+//				na=na+"("+data[k].playNum+")";
+				var url="";//源网址
+				var id=data[k].sourceId+"";//网址标识部分
+				if(id.charAt(id.length-1)=="w"){//酷我音乐，需去掉后缀.kw
+					id=id.substring(0, id.length-3);
+				}
+				var singer=data[k].singer+"";
+				if(singer.length>6){
+					singer=singer.substring(0,5)+"...";
+				}
+				var web=data[k].website+"";
+				if(web=="QQ音乐"){
+					url="https://y.qq.com/n/yqq/song/"+id;
+				}else if(web=="网易云音乐"){
+					url="https://music.163.com/#/song?id="+id;
+				}else if(web=="酷我音乐"){
+					url="http://www.kuwo.cn/play_detail/"+id;
+				}
+				var website="";
+				if(web.indexOf("553")!=-1){
+					website="http://img.duola.vip/image/tx/88888888_1585987333364.jpg";
+				}else if(web.indexOf("QQ")!=-1){
+					website="https://y.qq.com/favicon.ico";
+				}else if(web.indexOf("网易云")!=-1){
+					website="http://p3.music.126.net/tBTNafgjNnTL1KlZMt7lVA==/18885211718935735.jpg";
+				}else if(web.indexOf("酷我音乐")!=-1){
+					website="http://image.kuwo.cn/website/favicon.ico";
+				}else{
+					website="http://img.duola.vip/image/tx/88888888_1585987333364.jpg";
+				}
+				var dura=data[k].duration+"";
+				if(data&&dura.length==5){
+					dura=data[k].duration;
+				}else{
+					dura='--:--';
+				}
+				var html="";
+				if(which==0){
+					html="<i class='Hui-iconfont' onclick='playAudios(1,"+k+",\""+data[k].sourceId+"\")'>&#xe6e6;</i>" +
+					"&nbsp;<i class='Hui-iconfont' onclick='removeSong("+(data.length-k)+")'>&#xe609;</i>"+
+					"&nbsp;<i class='Hui-iconfont' onclick='addToSongList(0,"+data[k].id+")'>&#xe604;</i>";
+				}else if(which==1){
+					html="<i class='Hui-iconfont' onclick='playAudios(1,"+k+",\""+data[k].sourceId+"\")'>&#xe6e6;</i>";
+				}
+				$('.songs').append("<tr style='' onmouseout=\"hidePlayBtn(this,"+data[k].id+")\" onmouseover=\"showPlayBtn(this,"+data[k].id+")\" ondblclick='playAudios(1,"+k+",\""+data[k].sourceId+"\")' id='songName"+k+"'>" +
+						"<td style='width:13%;padding-left:33px;' id='xu"+k+"'>"+(k+1)+"&emsp;</td>" +
+						"<td style='width:23%;'><span><a title='"+data[k].songName+"'>"+na+"</a>" +
+						"&nbsp;<span style='visibility:hidden;' id='playBtn"+data[k].id+"'>" +
+						html+
+						"</span></span></td>" +
+						
+						"<td style='width:22%;padding-left:33px'><a onclick=\"\" title='"+data[k].singer+"'>"+singer+"</a></td>" +
+						"<td style='width:13%;padding-left:10px'><a href='"+url+"'  target='_blank'><img width='14px' height='14px' src='"+website+"'></a></td>" +
+						"<td style='width:13%;padding-left:20px'>"+dura+"</td>"+
+						"<td style='width:13%;padding-left:30px'><i onclick='editDiary("+data[k].id+")' class='Hui-iconfont'>&#xe60c;</i>"+
+						"&nbsp;<i onclick='feedBack("+data[k].id+")' title='反馈错误' class='Hui-iconfont'>&#xe70c;</i></td></tr>");
+				$(".songNameOrTitle").html('歌名');
+				$(".singerOrWritter").html('歌手')
+			}
+		}
+	});
+}
+function ajaxLoadAudio(list){
+	$.ajax({
+		type:"Post",
+		async:false,
+		url:"http://www.duola.vip/note/diary/getAudioByIds.do",
+		data:{
+			ids:list
+		},
+		dataType:"Json",
+		success:function(data){
+			songInfo=data.result;
+			for(var k=0;k<songInfo.length;k++){
+				var na=songInfo[k].ntitle+"";
+				if(na.length>8){
+					na=na.substring(0, 8)+"...";
+				}
+				$('.songs').append("<tr style='' ondblclick='playAudios(1,"+k+",\""+songInfo[k].nSongId+"\")' onmouseout=\"hidePlayBtn(this,"+songInfo[k].nid+")\" onmouseover=\"showPlayBtn(this,"+songInfo[k].nid+")\" id='songName"+k+"'>" +
+						"<td style='width:13%;padding-left:33px;' id='xu"+k+"'>"+(k+1)+"&emsp;</td>" +
+						"<td style='width:33%;'><span>" +
+						"<a title='"+songInfo[k].ntitle+"'>"+na+"</a>" +
+						"&nbsp;<span style='visibility:hidden;' id='playBtn"+songInfo[k].nid+"'>" +
+						"<i class='Hui-iconfont' onclick='playAudios(1,"+k+",\""+songInfo[k].nSongId+"\")'>&#xe6e6;</i>" +
+						"&nbsp;<i class='Hui-iconfont' onclick='removeSong("+(songInfo.length-k)+")'>&#xe609;</i>"+
+						"&nbsp;<i class='Hui-iconfont' onclick='addToSongList(1,"+songInfo[k].nid+")'>&#xe604;</i>"+
+						"</span></span></td>" +
+						
+						"<td style='width:22%;padding-left:33px'><a onclick=\"\" title='"+songInfo[k].userName+"'>"+songInfo[k].userName+"</a></td>" +
+						"<td style='width:13%;padding-left:13px'><a href='http://www.duola.vip/diary/"+songInfo[k].nid+"'  target='_blank'><img width='14px' height='14px' src='http://img.duola.vip/image/logo/dlam.jpg'></a></td>"+
+						"<td style='width:13%;padding-left:20px'>--</td>"+
+						"<td style='width:13%;padding-left:30px'></td>"+
+				"</tr>");
+				$(".songNameOrTitle").html('标题');
+				$(".singerOrWritter").html('作者');
+				$("#alyric").html('');
+				$("#lyric").html('');
+			}
+		}
+	});
+}
 //7.编辑歌曲信息
 function editDiary(id){
 	var userId=getCookie("userId")+"";
@@ -269,6 +294,12 @@ function editDiary(id){
 	}else{
 		vant.Toast("permission denied")
 	}
+}
+function feedBack(id){
+	vant.Toast("感谢反馈，请联系站长处理（可通过在某篇日记中评论）")
+}
+function inputSong(){
+	vant.Toast("暂不支持录歌功能，可联系站长录入歌曲（可通过在某篇日记中评论）")
 }
 //行不通----获取网络音频资源的时长
 function getDuration(sid){//getDuration(data[k].sourceId)
@@ -374,7 +405,8 @@ function playAudios(from,index,sid){
 	}else{
 		document.getElementById("alyric").innerHTML=songInfo[index].ncontent;
 	}
-	
+	addPlayRecord(from,song.currentTime);
+
 	song.src=url;
 	var btn=document.getElementById("pause");
 	btn.src="http://img.duola.vip/image/play.png";
@@ -386,12 +418,11 @@ function playAudios(from,index,sid){
 		vant.Toast(songInfo[index].ntitle)
 	}
 	alterStatus(index);
-	addPlayRecord(from,song.currentTime);
 
 }
 //11.播放某首歌时将这首歌特殊显示
 function alterStatus(index){
-	for(var i=0;i<songs.length;i++){
+	for(var i=0;i<songInfo.length;i++){
 		if(i==index){
 			$("#songName"+i).css("color","#e91e63");
 			$("#xu"+i).html("<img style='width: 16px;height: 16px' src='http://img.duola.vip/image/playing.gif'/>");
@@ -691,4 +722,58 @@ function add() {
  */
 function addToSongList(from,id){
 	vant.Toast("暂不支持"+id)
+}
+
+var randomRecommendThread;
+function oacRecommend(){
+	var title=document.getElementById("randomRecom").title;
+	if(title=='开启随机推荐'){
+		randomRecommendThread=window.setInterval("randomSong()", 10000);
+		vant.Toast("已开启歌曲随机推荐");
+		document.getElementById("randomRecom").title="关闭随机推荐";
+	}else{
+		window.clearInterval(randomRecommendThread);
+		vant.Toast("已关闭歌曲随机推荐");
+		document.getElementById("randomRecom").title="开启随机推荐";
+	}
+}
+function randomSong(){
+	vant.Toast("点歌曲名播放哦^-^<br>"+"<font onclick='play(this,1)'>---</font>")
+}
+
+function randomPList(num){
+	var pList=new Array();//清空原播放列表数组
+	for(var i=0;i<num;i++){
+		var n=random(1,920);
+		pList[i]=n;
+	}
+//	var songIds=","+pList+",";
+//	var url="../newList.do?name="+formatW2(new Date()+"")+"&desc="+formatW2(new Date()+"")+"随机播放歌曲创建的歌单&songIds="+songIds+"&creator=0";
+//	$.ajax({
+//		type:"Get",
+//		async:false,
+//		url:url,
+//		dataType:"Json",
+//		success:function(data){
+//			
+//		}
+//	});
+	$(".songs").html('')
+	ajaxLoadSongs(pList,1)
+}
+function loadHotSongs(num){
+	var pList=new Array();//清空原播放列表数组
+	$.ajax({
+		type:"Get",
+		async:false,
+		url:"http://m.duola.vip/queryHotSongs.do?num="+num,
+		dataType:"Json",
+		success:function(data){
+			for(var k=0;k<data.length;k++){
+				pList.push(data[k].id);
+			}
+		}
+	});
+	$(".songs").html('')
+	ajaxLoadSongs(pList,1)
 }
