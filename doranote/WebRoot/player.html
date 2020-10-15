@@ -8,13 +8,14 @@
     <link rel="Shortcut Icon" href="http://img.duola.vip/image/logo/dlam.jpg" />
     <meta charset="utf-8">
     <link rel="stylesheet" type="text/css" href="hui/lib/Hui-iconfont/1.0.8/iconfont.css"/>
-    <link rel="stylesheet" type="text/css" href="hui/diary/css/player.css"/>
-    <link rel="stylesheet" type="text/css" href="hui/diary/css/index.css"><!-- 回顶部，歌曲选择框-->
+    <link rel="stylesheet" type="text/css" href="css/player.css"/>
+    <link rel="stylesheet" type="text/css" href="css/index.css"><!-- 回顶部，歌曲选择框-->
 	<script type="text/javascript" src="hui/diary/js/jquery.js"></script>
 	<script type="text/javascript" src="hui/static/h-ui/js/H-ui.min.js"></script><!-- $.cookie()所在js -->
 	<script type="text/javascript" src="hui/static/h-ui.admin/js/H-ui.admin.js"></script>
 	<script type="text/javascript" src="js/jsutil.js"></script>
 	<script type="text/javascript" src="js/player.js"></script>
+	<script type="text/javascript" src="js/timeDeal.js"></script><!-- 时间处理函数 -->
 	
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vant@2.4/lib/index.css">
 	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
@@ -26,7 +27,7 @@
     <span class="topmenu" onclick="changeSkin()" title="alt+B键切换背景"><i class="Hui-iconfont" style="font-size:18px">&#xe62a;</i></span>
     <span class="topmenu" onclick="openMusic()" title="alt+S键搜索歌曲"><i class="Hui-iconfont" style="font-size:18px">&#xe709;</i></span>
     <!-- <span class="topmenu" onclick="oacRecommend('close')" id="randomRecom" title="开启随机推荐"><i class="Hui-iconfont" style="font-size:18px">&#xe65e;</i></span> -->
-    <span class="topmenu" onclick="inputSong()" title="录歌"><i class="Hui-iconfont" style="font-size:18px">&#xe716;</i></span>
+    <span class="topmenu" onclick="inputSong()" title="全民录歌"><i class="Hui-iconfont" style="font-size:18px">&#xe716;</i></span>
     <audio id="audio" src="" autoplay="autoplay" controls="controls" style="display:none;float: left;margin-left: 20px;margin-top: 10px;"></audio>
     <span id="lyric" style="color: green;cursor:all-scroll;font-size:15px;position:fixed;top:635px;right:346px;"></span>
     <div class="audioType">
@@ -85,6 +86,23 @@
        		<br><br><br><br>列表最多展示10首歌曲，若搜不到你想选择的歌曲，可联系站长添加歌曲
        	</div>
     </div>
+    <form id="songInput" style="cursor:pointer;position:fixed;overflow:scroll;background:#3CBC8D;right:86px;top:200px;width:260px;height:350px;display: none">
+       	<span onclick="closeSongInput()" style="color:black;margin-left: 210px;">X</span>
+       	<br><br>
+       	源id：<input id="sourceId" placeholder="必填" name="sourceId" type="text"><br>
+       	歌名：<input id="songName" placeholder="必填" name="songName" type="text"><br>
+       	歌手：<input id="singer" placeholder="必填" name="singer" type="text"><br>
+       	专辑：<input id="album" placeholder="选填" name="album" type="text"><br>
+       	时长：<input id="duration" placeholder="选填" name="duration" type="text"><br>
+       	发行：<input id="releaseTime" placeholder="选填" name="releaseTime" type="text"><br>
+       	来源：<select name="website">
+		  			<option value="网易云音乐">网易云音乐</option>
+		  			<option value="QQ音乐">QQ音乐</option>
+		  			<option value="酷我音乐">酷我音乐</option>
+		  		</select><br>
+       	描述：<input id="descr" placeholder="选填" name="descr" type="text"><br>
+       	<span onclick="addSong()" style="margin-left: 66px;margin-top: 11px;">录入</span> 
+    </form>
      <div id="alyric" style=""></div>
     <!-- 其他工具#3f4156：上一曲，下一曲，播放暂停，进度条，音量加减，播放列表显示与隐藏按钮 -->
 	<div id="bottom" style="background: #009688;position:fixed;bottom:0;width:100%;height:50px;left:1px;right:10px">

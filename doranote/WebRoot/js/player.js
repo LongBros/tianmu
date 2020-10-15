@@ -222,12 +222,13 @@ function ajaxLoadSongs(list,which){
 					dura='--:--';
 				}
 				var html="";
-				if(which==0){
+				if(which==0){//播放列表
 					html="<i class='Hui-iconfont' onclick='playAudios(1,"+k+",\""+data[k].sourceId+"\")'>&#xe6e6;</i>" +
-					"&nbsp;<i class='Hui-iconfont' onclick='removeSong("+(data.length-k)+")'>&#xe609;</i>"+
-					"&nbsp;<i class='Hui-iconfont' onclick='addToSongList(0,"+data[k].id+")'>&#xe604;</i>";
-				}else if(which==1){
-					html="<i class='Hui-iconfont' onclick='playAudios(1,"+k+",\""+data[k].sourceId+"\")'>&#xe6e6;</i>";
+					"&nbsp;<i class='Hui-iconfont' onclick='removeSong("+(data.length-k)+")'>&#xe609;</i>";//+
+					//"&nbsp;<i class='Hui-iconfont' onclick='addToSongList(0,"+data[k].id+")'>&#xe604;</i>"
+				}else if(which==1){//热播、推荐
+					html="<i class='Hui-iconfont' onclick='playAudios(1,"+k+",\""+data[k].sourceId+"\")'>&#xe6e6;</i>"+
+					"&nbsp;<i class='Hui-iconfont' onclick='playerAudio("+data[k].id+",2)'>&#xe604;</i>";
 				}
 				$('.songs').append("<tr style='' onmouseout=\"hidePlayBtn(this,"+data[k].id+")\" onmouseover=\"showPlayBtn(this,"+data[k].id+")\" ondblclick='playAudios(1,"+k+",\""+data[k].sourceId+"\")' id='songName"+k+"'>" +
 						"<td style='width:13%;padding-left:33px;' id='xu"+k+"'>"+(k+1)+"&emsp;</td>" +
@@ -296,10 +297,19 @@ function editDiary(id){
 	}
 }
 function feedBack(id){
-	vant.Toast("感谢反馈，请联系站长处理（可通过在某篇日记中评论）")
+	vant.Toast("感谢反馈，请联系站长处理（QQ群：415086137）")
 }
 function inputSong(){
-	vant.Toast("暂不支持录歌功能，可联系站长录入歌曲（可通过在某篇日记中评论）")
+	var userId=getCookie("userId")+"";
+	if(userId){
+		if(userId=="5211314"){
+			openSongInput()
+		}else{
+			vant.Toast("请联系站长获取录歌权限（QQ群：415086137）")
+		}
+	}else{
+		vant.Toast("请先登录！！！")
+	}
 }
 //行不通----获取网络音频资源的时长
 function getDuration(sid){//getDuration(data[k].sourceId)
@@ -440,9 +450,9 @@ function addPlayRecord(from,duration){
 	var url="/AddPlayRecordServlet";
 	var songId=0;
 	var songType;
-	if(what=="0"&&songInfo[lastPlay].id){//歌曲
+	if(what=="0"&&songInfo[lastPlay]&&songInfo[lastPlay].id){//歌曲
 		songId=songInfo[lastPlay].id;
-	}else if(what=="1"&&songInfo[lastPlay].nid){//音频
+	}else if(what=="1"&&songInfo[lastPlay]&&songInfo[lastPlay].nid){//音频
 		songId=songInfo[lastPlay].nid;
 	}else{//无上一次播放
 		return;
@@ -744,20 +754,22 @@ function randomSong(){
 function randomPList(num){
 	var pList=new Array();//清空原播放列表数组
 	for(var i=0;i<num;i++){
-		var n=random(1,920);
+		var n=random(1,934);
 		pList[i]=n;
 	}
-//	var songIds=","+pList+",";
-//	var url="../newList.do?name="+formatW2(new Date()+"")+"&desc="+formatW2(new Date()+"")+"随机播放歌曲创建的歌单&songIds="+songIds+"&creator=0";
-//	$.ajax({
-//		type:"Get",
-//		async:false,
-//		url:url,
-//		dataType:"Json",
-//		success:function(data){
-//			
-//		}
-//	});
+	
+	var songIds=","+pList+",";
+	var url="http://m.duola.vip/newList.do?name="+formatW2(new Date()+"")+"&desc="+formatW2(new Date()+"")+"于哆啦网随机播放歌曲创建的歌单&songIds="+songIds+"&creator=0";
+	$.ajax({
+		type:"Get",
+		async:false,
+		url:url,
+		dataType:"Json",
+		success:function(data){
+			
+		}
+	});
+	
 	$(".songs").html('')
 	ajaxLoadSongs(pList,1)
 }
@@ -776,4 +788,57 @@ function loadHotSongs(num){
 	});
 	$(".songs").html('')
 	ajaxLoadSongs(pList,1)
+}
+
+//打开音乐录入框
+function openSongInput(){
+	$("#songInput").css("display","inline-block");
+}
+//关闭音乐录入框
+function closeSongInput(){
+	$("#songInput").css("display","none");
+}
+//录入歌曲
+function addSong(){
+	var form=document.getElementById("songInput");
+	var sourceId=form.sourceId.value+"";
+	var songName=form.songName.value+"";
+	var singer=form.singer.value+"";
+	var duration=form.duration.value+"";
+	
+	var album=form.album.value+"";
+	var imgPath="";//form.imgPath.value+
+	var website=form.website.value+"";
+	var descr=form.descr.value+"";
+	var releaseTime=form.releaseTime.value+"";
+	var time="";//form.time.value+
+	if(sourceId.length==0||songName.length==0||singer.length==0){
+		alert("部分信息未输入！！！")
+		return ;
+	}
+	var picture="";
+//	alert(util);
+	$.ajax({
+		type:"post",
+		async:true,
+		url:"http://m.duola.vip/addSong.do",
+		data:{
+			sourceId:sourceId,
+			songName:songName,
+			singer:singer,
+			duration:duration,
+			album:album,
+			imgPath:imgPath,
+			website:website,
+			descr:descr,
+			releaseTime:releaseTime,
+			time:time
+		},
+		dataType:"Json",
+		success:function(res){
+			if(res){
+				vant.Toast(res.msg);
+			}
+		}
+	});
 }

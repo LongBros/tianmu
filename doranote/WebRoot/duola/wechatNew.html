@@ -166,7 +166,7 @@
 					  vant.Toast("添加成功");
 				},spide(){
 					vant.Toast("开始爬取日记");
-					axios.get('http://www.duola.vip/note/diary/spideDaily'
+					axios.get('http://www.duola.vip/note/diary/spideDaily.do'
 					,{ headers:{ 'Content-Type':'multipart/form-data' }},
 					  )
 					  .then(function (response) {

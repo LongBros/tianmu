@@ -31,7 +31,7 @@ import com.longbro.doranote.util.TimeUtil;
 public class DoraTimerJob {
 	Logger log=Logger.getLogger(getClass());
 	@Autowired
-	static NoteBookService nbs;
+	NoteBookService nbs;
 	@Autowired
     UserInfoService uis;
 	public DoraTimerJob() {
@@ -84,7 +84,7 @@ public class DoraTimerJob {
 	 * @time 2020年10月1日 下午7:39:39
 	 */
 	@Scheduled(cron="${dora.job.spidePeopleDaily}")
-	public static void spideDaily() throws Exception{
+	public void spideDaily() throws Exception{
 		String selectSql=new String("select we_url from d_wechat_data where we_status=0 and we_acc_id='22760641'");
 		ResultSet rs=JdbcUtil.select(selectSql);
 		String urls[]=new String[20];
@@ -112,7 +112,7 @@ public class DoraTimerJob {
 		JdbcUtil.insertOrUpdate(updateSql);
 	}
 	@Scheduled(cron="${dora.job.spideTenthDaily}")
-	public static void spideTenDaily() throws Exception{
+	public void spideTenDaily() throws Exception{
 		String selectSql=new String("select we_url from d_wechat_data where we_status=0 and we_acc_id='57453563'");
 		ResultSet rs=JdbcUtil.select(selectSql);
 		String urls[]=new String[20];
@@ -140,7 +140,7 @@ public class DoraTimerJob {
 		JdbcUtil.insertOrUpdate(updateSql);
 	}
 	//写入日记
-	public static void writeDiary(List<HashMap<String,String>> list,String acc,String loc,String time){
+	public void writeDiary(List<HashMap<String,String>> list,String acc,String loc,String time){
 		for(HashMap<String,String> map:list){
 			NoteBook nb=new NoteBook();
 			nb.setNWritter(acc);nb.setNAuthority(0);nb.setNAllowComment(0);

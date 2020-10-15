@@ -4,6 +4,7 @@ import java.awt.Font;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,8 +34,10 @@ import com.longbro.doranote.job.DoraTimerJob;
 import com.longbro.doranote.service.NoteBookService;
 import com.longbro.doranote.util.FileProduce;
 import com.longbro.doranote.util.ImageProduce;
+import com.longbro.doranote.util.JdbcUtil;
 import com.longbro.doranote.util.NumberUtil;
 import com.longbro.doranote.util.SpideLapuda;
+import com.longbro.doranote.util.SpideWechat;
 import com.longbro.doranote.util.Strings;
 import com.longbro.doranote.util.TimeUtil;
 
@@ -535,8 +538,49 @@ public class NoteBookController{
     	return result;
     }
     @RequestMapping(value="spideDaily")
-    public void spideDaily() throws Exception{
-    	DoraTimerJob.spideDaily();
-    	DoraTimerJob.spideTenDaily();
+    @ResponseBody
+    public BaseResult spideDaily() throws Exception{
+    	BaseResult result=new BaseResult<>();
+
+    	String selectSql=new String("select we_url from d_wechat_data where we_status=0 and we_acc_id='22760641'");
+		ResultSet rs=JdbcUtil.select(selectSql);
+		String urls[]=new String[20];
+		int i=0;
+		while(rs.next()){
+			urls[i]=rs.getString("we_url");
+			System.out.println(rs.getString("we_url"));
+			i++;
+		}
+//		rs.close();
+		
+		if(StringUtils.isEmpty(urls[0])){
+			result.setMessage("没有未爬取的人民日报日记");
+			result.setCode(200);
+			return result;
+		}
+		System.out.println("开始爬取人民日报的日记");
+		long start=System.currentTimeMillis();
+		List<HashMap<String,String>> list=SpideWechat.getPeopleDailyReport(urls,"22760641");
+		System.out.println("爬取"+list.size()+"篇日记共计耗时："+(System.currentTimeMillis()-start));
+		System.out.println("开始写入人民日报的日记");
+		
+		for(HashMap<String,String> map:list){
+			NoteBook nb=new NoteBook();
+			nb.setNWritter("22760641");nb.setNAuthority(0);nb.setNAllowComment(0);
+			nb.setNTitle(map.get("title"));nb.setNContent(map.get("content"));
+			nb.setNWeather(0);nb.setNMood(0);nb.setnTop(0);nb.setnUserTop(0);
+			nb.setNTime(map.get("time")+" 22:00:00");nb.setnSongId(map.get("voice"));
+			nb.setNType(4);nb.setNLocation("北京市");nb.setnWriteDevice("spider");
+			noteBookService.addNote(nb);
+		}
+		
+		System.out.println("成功写入人民日报的日记");
+		
+		String updateSql="update d_wechat_data set we_status=1 where we_acc_id='22760641'";
+		JdbcUtil.insertOrUpdate(updateSql);
+    	
+    	result.setCode(200);
+    	result.setMessage("爬取成功");
+    	return result;
     }
 }

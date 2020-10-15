@@ -181,6 +181,12 @@ function getCookie(name){
  * type	1:音频，2：歌曲
  */
 function playerAudio(sid,type){
+	var userId=getCookie("userId")+"";
+	var maxLength=5;
+	if(userId){
+		maxLength=40;
+	}
+	
 	if(!sid)//部分用户可能家歌异常
 		return;
 	sid=sid+"";
@@ -196,9 +202,14 @@ function playerAudio(sid,type){
 		audioList=audioList.replace(new RegExp("%3A","gm"),":").replace(new RegExp("%3F","gm"),"?")
 		.replace(new RegExp("%3D","gm"),"=").replace(new RegExp("%2C","gm"),",");
 		var audio=audioList.split(",")
-		if(audio.length>20){
-			console.log("播放列表中目前最多只能有20首音频")
-			alert("添加失败，超出播放列表持音频数量限制")
+		if(audio.length>maxLength){
+			console.log("播放列表中目前最多只能有"+maxLength+"个音频")
+			if(maxLength==5){
+				alert("登录后可添加更多音频至列表，目前最多只能有6个音频")
+				login_popup()
+			}else{
+				alert("添加失败，超出播放列表持音频数量限制")
+			}
 			return;
 		}
 		if(audio.indexOf(sid)==-1)
@@ -214,9 +225,14 @@ function playerAudio(sid,type){
 		songLists=songLists.replace(new RegExp("%3A","gm"),":").replace(new RegExp("%3F","gm"),"?")
 		.replace(new RegExp("%3D","gm"),"=").replace(new RegExp("%2C","gm"),",");
 		var song=songLists.split(",")
-		if(song.length>40){
-			console.log("播放列表中目前最多只能有40首歌曲")
-			alert("添加失败，超出播放列表持歌数量限制")
+		if(song.length>maxLength){
+			console.log("播放列表中目前最多只能有"+maxLength+"首歌曲")
+			if(maxLength==5){
+				alert("登录后可添加更多歌曲至列表,目前最多只能有6首歌曲")
+				login_popup()
+			}else{
+				alert("添加失败，超出播放列表持歌数量限制")
+			}
 			return;
 		}
 		if(song.indexOf(sid)==-1)

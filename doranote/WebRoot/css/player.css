@@ -56,6 +56,9 @@ body{
 #alyric::-webkit-scrollbar {
    	display: none;
 }
+#songInput::-webkit-scrollbar {
+   	display: none;
+}
 thead th{
 	font-size:12px;
 }
