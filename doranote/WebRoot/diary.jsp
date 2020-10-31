@@ -14,7 +14,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	<meta http-equiv="cache-control" content="no-cache">
 	<meta http-equiv="expires" content="0">    
 	<meta name="keywords" content="${diary.NTitle}">
-	<meta name="description" content="${diary.userName}于${diary.NTime}写的日记：${diary.NTitle}">
+	<meta name="description" content="${description}">
 	<meta charset="utf-8">
 	<meta name="renderer" content="webkit|ie-comp|ie-stand">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -284,7 +284,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			</center>
 			</h2>
 			<div class='info'>
-				<i class="Hui-iconfont">&#xe60d;</i><span style='cursor:pointer'>${diary.userName}</span>&emsp;
+				<i class="Hui-iconfont">&#xe60d;</i><a href='author.html?${diary.NWritter}'>${diary.userName}</a>&emsp;
 				<i class="Hui-iconfont">&#xe690;</i>${diary.NTime }&emsp;
 				<i class="Hui-iconfont">&#xe681;</i>
 				<c:choose><c:when test="${diary.NType=='0'}">生活日记</c:when><c:when test="${diary.NType=='1'}">工作笔记</c:when>
@@ -303,11 +303,15 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			</div>
 			<div class='content'>
 			<c:if test="${not empty diary.audioInfo}">
-				&emsp;<span style='font-size:8px'>本文含有歌曲音频：<a href='http://m.duola.vip/amaze/songsList.jsp' target='_blank' style='color:red'>${diary.audioInfo}</a>，点击标题后方按钮可唤起播放</span><br><br>
+				&emsp;<span style='font-size:8px'>本文含有歌曲音频：
+						<a href='http://m.duola.vip/amaze/songsList.jsp' target='_blank' style='color:red'>
+						${(diary.audioInfo).substring((diary.audioInfo).indexOf("-")+1)}
+						</a>，点击标题后方按钮可唤起播放
+				</span><br><br>
 			</c:if>
 			${diary.NContent}
 			</div>
-			<br>&emsp;&emsp;&emsp;<span>本文链接：${url}<font color='blue'></font>，全文${diary.wordSize}字符，主人公：<a href='author.html?author=${diary.NWritter}' style='color:red'>${diary.userName}</a>			
+			<br>&emsp;&emsp;&emsp;<span>本文链接：${url}<font color='blue'></font>，全文${diary.wordSize}字符，主人公：<a href='author.html?${diary.NWritter}' style='color:red'>${diary.userName}</a>			
 		    <br>&emsp;&emsp;&emsp;如需分享请注明出处，谢谢喜欢！</span><br>
 		</div>
 		<span id="pre1" style="float: left;margin-left: 20px;margin-top: 10px;"></span>

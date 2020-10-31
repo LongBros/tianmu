@@ -1,6 +1,28 @@
 body{
-	background:#292a2b;
+	background: #355c7d; /* fallback for old browsers */
+  	background: -webkit-linear-gradient(to right, #355c7d, #6c5b7b, #c06c84); /* Chrome 10-25, Safari 5.1-6 */
+  	background: linear-gradient(to right, #355c7d, #6c5b7b, #c06c84); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+	box-sizing:border-box;
+	-moz-box-sizing:border-box;
+	-webkit-box-sizing:border-box;
 }
+body::-webkit-scrollbar { /*滚动条整体样式*/
+	width: 7px; /*高宽分别对应横竖滚动条的尺寸*/
+	height: 1px;
+}
+body::-webkit-scrollbar-thumb { /*滚动条里面小方块*/
+	border-radius: 10px;
+	-webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+	background: #535353;
+}
+body::-webkit-scrollbar-track { /*滚动条里面轨道*/
+	-webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+	border-radius: 0px;
+	background: #041618;
+}
+/* body{
+	background-color: rgb(224, 224, 224); 	64, 0, 0	59, 39, 117		66, 70, 37  	41, 42, 43  	89, 107, 132	58, 115, 63
+} */
 .logo{
 	color:pink;
 	margin-left:20px;
@@ -23,6 +45,19 @@ body{
 	cursor: pointer;
 	color:white;
 }
+.topleftmenu{
+	position:absolute;
+	float:left;
+	font-size:14px;
+	margin-left:80px;
+	padding-left: 20px;
+	padding-top:15px;
+	cursor: pointer;
+	color:white;
+}
+.topleftmenu span{
+	padding-left: 40px;
+}
 .audioType{
 	float:left;
 	font-size:20px;
@@ -35,20 +70,27 @@ body{
 	padding-left: 20px;
 }
 .songList{
-	max-width:800px;
+	width:880px;
+	height:500px;
+	overflow-y:auto;
 	float:left;
-	margin-top:33px;
+	margin-top:53px;
 	color:white;
 	cursor: pointer;
 }
-
+#albumImg{
+	margin-left:20px;
+	margin-top:60px;
+	float:right;
+	margin-right:80px;
+}
 #alyric{
 	color:white;
 	margin-left:20px;
-	margin-top:100px;
+	margin-top:20px;
 	font-size:13px;
 	width:300px;
-	height:470px;
+	height:313px;
 	overflow:scroll;
 	float:right;
 	margin-right:140px;
@@ -58,6 +100,21 @@ body{
 }
 #songInput::-webkit-scrollbar {
    	display: none;
+}
+.songList::-webkit-scrollbar {
+   	display: none;
+   	/* width: 4px; */
+}
+.songList::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+    background: rgba(0,0,0,0.2);
+}
+.songList::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+    border-radius: 5;
+    background: rgba(0,0,0,0.1);
+
 }
 thead th{
 	font-size:12px;

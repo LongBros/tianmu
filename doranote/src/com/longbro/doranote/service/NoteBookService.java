@@ -16,7 +16,7 @@ import com.longbro.doranote.BaseResult;
 import com.longbro.doranote.bean.Diary;
 import com.longbro.doranote.bean.NoteBook;
 import com.longbro.doranote.dao.NoteBookDao;
-import com.longbro.doranote.util.SpideLapuda;
+import com.longbro.doranote.spider.SpideLapuda;
 import com.longbro.doranote.util.TimeUtil;
 /**
  * 描述：笔记本 DAO接口

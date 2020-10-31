@@ -13,6 +13,19 @@ import java.util.Random;
  * @version
  */
 public class Strings {
+	public static void main(String[] args) {
+//		for(int i=0;i<10;i++){
+//			System.out.println(allotNum(8));
+//		}
+//		System.out.println(genNumber(10,3000));
+		
+		String dest[]={};
+//		System.arraycopy(name, 111, dest, 111, 111);
+//		Arrays.copyOf(original, newLength)
+		
+		//计算10的八次方
+		System.out.println("123".substring(0, 100));
+	}
 	public static String category[]={"交通","早餐","午餐","晚餐","生活","话费","娱乐","日常","零食","饮料","服装","学习"};
 	public static String Incate[]={"刷单","工资","兼职","软件","代缴电费","其他"};
 
@@ -79,19 +92,7 @@ public class Strings {
 			return allotEight1();
 		}
 	}
-	public static void main(String[] args) {
-//		for(int i=0;i<10;i++){
-//			System.out.println(allotNum(8));
-//		}
-//		System.out.println(genNumber(10,3000));
-		
-		String dest[]={};
-//		System.arraycopy(name, 111, dest, 111, 111);
-//		Arrays.copyOf(original, newLength)
-		
-		//计算10的八次方
-		
-	}
+
 	/**
 	 * 计算who的wei次幂
 	 * @desc 

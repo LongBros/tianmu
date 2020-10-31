@@ -369,6 +369,7 @@
 		SELECT d.*,di.u_User_Name userName,di.u_Head_Image headImage 
 		FROM d_diary d
 		inner join d_user_info di on d.n_Writter=di.u_User_Id
-		 WHERE FIND_IN_SET(n_Id,#{ids})
+		WHERE FIND_IN_SET(n_Id,#{ids})
+		order by FIND_IN_SET(n_Id,#{ids})
 	</select>
 </mapper>

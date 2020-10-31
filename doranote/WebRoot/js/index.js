@@ -7,7 +7,7 @@ var sexInt=0;
 var call="他";
 var listStyle=1;//01-29
 var loopPlay=0;//01-30
-var showWhichTab=4;////09-20	默认加载聆听
+var showWhichTab=4;//09-20	默认加载聆听
 var secretWall=0;
 var secretInteract=0;
 var secretAccount=0;
@@ -49,10 +49,7 @@ function getUser(){
 		document.getElementById("image").innerHTML="请登录";
 	}
 }
-//2.弹出登录框
-function login_popup() {
-    $("#loginModal").modal("show");
-}
+
 /**
  * 3.登录校验
  */
@@ -783,7 +780,7 @@ function changeMode(){
 //.底部栏功能切换
 function tabOnItem(which){
 	if(which=="0"){//每日一句
-		window.open("http://www.duola.vip/LongBlog/msgboard.jsp", "_blank");
+		window.open("http://blog.duola.vip/msgboard.jsp", "_blank");
 	}else if(which=="1"){//用户使用指南
 		window.open("https://support.qq.com/products/136712/team/","_blank");
 	}else if(which=="2"){//赞赏支持
@@ -798,7 +795,7 @@ function tabOnItem(which){
 	}else if(which=="3"){//联系作者
 		window.open("https://support.qq.com/products/136712","_blank");
 	}else if(which=="4"){//赞助记录
-		window.open("http://www.duola.vip/LongBlog/sponsor/showSponsor.jsp","_blank");
+		window.open("http://blog.duola.vip/sponsor/showSponsor.jsp","_blank");
 	}
 }
 //.支付宝、微信、QQ收款码切换

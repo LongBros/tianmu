@@ -403,6 +403,7 @@
 										}
 										
 										con=con.replace(reg, "");
+										con=con.replace(new RegExp("nbsp;","gm"), "");
 										con=con.replace(new RegExp(":","gm"), "");
 										con=con.replace(new RegExp("<","gm"), "");
 										con=con.replace(new RegExp("&","gm"), "");

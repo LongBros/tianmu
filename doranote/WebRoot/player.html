@@ -2,10 +2,10 @@
 <html>
   <head>
     <title>哆啦网播放器</title>
-    <meta name="keywords" content="keyword1,keyword2,keyword3">
-    <meta name="description" content="this is my page">
+    <meta name="keywords" content="哆啦网播放器">
+    <meta name="description" content="哆啦网播放器">
     <meta name="content-type" content="text/html; charset=UTF-8">
-    <link rel="Shortcut Icon" href="http://img.duola.vip/image/logo/dlam.jpg" />
+    <link rel="Shortcut Icon" href="http://img.duola.vip/image/dora_music_logo.jpg" />
     <meta charset="utf-8">
     <link rel="stylesheet" type="text/css" href="hui/lib/Hui-iconfont/1.0.8/iconfont.css"/>
     <link rel="stylesheet" type="text/css" href="css/player.css"/>
@@ -21,37 +21,55 @@
 	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/vant@2.4/lib/vant.min.js"></script>
   </head>
-  
-  <body onunload="closeWindow()" id="body" style="background:url(http://img.duola.vip/image/back/back1.jpg)">
+  <body onunload="closeWindow()" id="body"><!--  style="background:url(http://img.duola.vip/image/back/back1.jpg)" -->
     <div class="logo"><a href="http://www.duola.vip" target="_blank">哆啦网播放器</a></div>
-    <span class="topmenu" onclick="changeSkin()" title="alt+B键切换背景"><i class="Hui-iconfont" style="font-size:18px">&#xe62a;</i></span>
-    <span class="topmenu" onclick="openMusic()" title="alt+S键搜索歌曲"><i class="Hui-iconfont" style="font-size:18px">&#xe709;</i></span>
-    <!-- <span class="topmenu" onclick="oacRecommend('close')" id="randomRecom" title="开启随机推荐"><i class="Hui-iconfont" style="font-size:18px">&#xe65e;</i></span> -->
-    <span class="topmenu" onclick="inputSong()" title="全民录歌"><i class="Hui-iconfont" style="font-size:18px">&#xe716;</i></span>
+    <span class="topmenu" id="selfinfo"><img id="headImg"  title="个人信息" onclick="hideOrShow()" style="width:33px;height:33px;border-radius:25px;" src=""></img></span>
+	<span class="topmenu other" onclick="switchTab(0)" title="免责声明及哆啦网使用指南"><i class="Hui-iconfont" style="font-size:18px">&#xe6e0;</i></span>
+    <!-- <span class="topmenu other" onclick="switchTab(1)" title="alt+B键切换背景"><i class="Hui-iconfont" style="font-size:18px">&#xe62a;</i></span> -->
+    <span class="topmenu other" onclick="switchTab(2)" title="alt+S键搜索歌曲"><i class="Hui-iconfont" style="font-size:18px">&#xe709;</i></span>
+    <span class="topmenu other" onclick="switchTab(3)" id="randomRecom" title="点击开启随机推荐"><i class="Hui-iconfont" style="font-size:18px">&#xe65e;</i></span>
+    <span class="topmenu other" onclick="switchTab(4)" title="全民录歌"><i class="Hui-iconfont" style="font-size:18px">&#xe716;</i></span>
+    
+    <div class="topleftmenu" title="">
+    	<span onclick="switchTab(5)">删除&nbsp;<i class="Hui-iconfont" style="font-size:18px">&#xe609;</i></span>
+    	<span title='清空播放列表' onclick="removeSong()">清空列表&nbsp;<i class="Hui-iconfont" style="font-size:18px">&#xe6e2;</i></span>
+    </div>
+    <span class="topleftmenu" onclick="switchTab(4)" title=""></span>
     <audio id="audio" src="" autoplay="autoplay" controls="controls" style="display:none;float: left;margin-left: 20px;margin-top: 10px;"></audio>
-    <span id="lyric" style="color: green;cursor:all-scroll;font-size:15px;position:fixed;top:635px;right:346px;"></span>
+    <span id="lyric" style="color:yellow;cursor:all-scroll;font-size:15px;position:fixed;top:635px;right:656px;"></span>
     <div class="audioType">
+    	<p style="display:block" onclick="loadAudio(5)" title="最新录入歌曲">
+    		<span id="bar5" style="color:orange;font-size:20px;display:none">|&nbsp;</span><span style="font-size:8px">最新</span>
+    		<span id="newInputBtn">
+    		<i class="Hui-iconfont" style="font-size:13px">&#xe6c4;</i>
+    		</span>
+    		<span id="newInputnum" style="font-size:12px">50</span>
+    	</p>
     	<p style="display:block" onclick="loadAudio(4)" title="随机推荐歌曲">
+    		<span id="bar4" style="color:orange;font-size:20px;display:none">|&nbsp;</span><span style="font-size:8px">随听</span>
     		<span id="ranRecomBtn">
     		<i class="Hui-iconfont" style="font-size:13px">&#xe6d0;</i>
     		</span>
-    		<span id="ranRecomnum" style="font-size:12px"></span>
+    		<span id="ranRecomnum" style="font-size:12px">20</span>
     	</p>
     	<p style="display:block" onclick="loadAudio(0)" title="热播歌曲">
+    		<span id="bar0" style="color:orange;font-size:20px;display:none">|&nbsp;</span><span style="font-size:8px">热播</span>
     		<span id="hotPlayBtn">
     		<i class="Hui-iconfont" style="font-size:13px">&#xe6c1;</i>
     		</span>
-    		<span id="hotPlaynum" style="font-size:12px"></span>
+    		<span id="hotPlaynum" style="font-size:12px">20</span>
     	</p>
     	<p style="display:block" onclick="loadAudio(1)" title="哆啦网的歌曲列表">
+    		<span id="bar1" style="color:orange;font-size:20px;display:none">|&nbsp;</span><span style="font-size:8px">歌曲</span>
     		<span id="songsBtn"><img style='width: 16px;height: 16px' src='http://img.duola.vip/image/playing.gif'/></span>
     	    <span id="songnum" style="font-size:12px"></span>
     	</p>
     	<p style="display:block" onclick="loadAudio(2)" title="哆啦网的音频列表">
+    		<span id="bar2" style="color:orange;font-size:20px;display:none">|&nbsp;</span><span style="font-size:8px">音频</span>
     		<span id="audiosBtn">
     		<i class="Hui-iconfont" style="font-size:15px">&#xe6a5;</i>
     		</span>
-    		<span id="audionum" style="font-size:12px"></span>
+    		<span id="audionum" style="font-size:12px;margin-bottom:10px"></span>
     	</p>
     	<!-- <p style="display:block" onclick="loadAudio(3)" title="加载歌单">
     		<span id="listBtn">
@@ -60,11 +78,13 @@
     		<span id="listnum" style="font-size:12px"></span>
     	</p> -->
     </div>
-    <div class="songList" >
+    
+    <div class="songList" id="songList">
     	<table>
 	    	<thead>
 	    		<tr>
-	    		    <th style="width:13%;">序号<i class='Hui-iconfont' title='清空播放列表' onclick="removeSong()">&#xe609;</i></th>
+	    			<th style="width:6%;"><input type="checkbox" id="chooseIndex" onclick="chooseWhich()"></th>
+	    		    <th style="width:8%;padding-right:18px">序号</th>
 	    		    <th class="songNameOrTitle" style="width:23%;padding-right:108px">歌曲</th>
 	    		    <th class="singerOrWritter" style="width:22%;padding-right:48px">歌手</th>
 	    		    <th style="width:13%;padding-right:48px">来源</th>
@@ -73,61 +93,114 @@
 	    		</tr>
 	    	</thead>
 	    	<tbody class="songs">
-	    			    	
 	    	</tbody>
     	</table>
     	
     	<img id="emptyIcon" style="display:none;margin-left: 260px;margin-top: 60px;" src="http://img.duola.vip/image/empty.png">
     </div>
-    <div id="searchSong" style="cursor:pointer;position:fixed;overflow:scroll;background:#3CBC8D;right:66px;top:200px;width:240px;height:350px;display: none">
-       	<span onclick="closeSearch()" style="color:black;margin-left: 210px;">X</span>
-       	<input id="key" name="key" type="text" oninput="searchMusic(2)" placeholder="输入你要搜索的歌曲">
+    <div id="searchSong" style="cursor:pointer;position:fixed;overflow:scroll;background:#3CBC8D;right:46px;top:240px;width:240px;height:350px;display: none">
+       	<span onclick="closeSearch()" style="color:white;margin-left: 220px;">X</span>
+       	<input id="key" name="key" type="text" oninput="searchMusic(2)" placeholder="输入你要搜索的歌曲名">
        	<div id="songsList">
-       		<br><br><br><br>列表最多展示10首歌曲，若搜不到你想选择的歌曲，可联系站长添加歌曲
+       		<br><br><br><br><span style="color:red;font-size:10px">列表中最多展示10首歌曲，若搜不到你想选择的歌曲，可联系站长获取录歌权限之后添加歌曲（Q群：415086137）</span>
        	</div>
     </div>
-    <form id="songInput" style="cursor:pointer;position:fixed;overflow:scroll;background:#3CBC8D;right:86px;top:200px;width:260px;height:350px;display: none">
-       	<span onclick="closeSongInput()" style="color:black;margin-left: 210px;">X</span>
+    <form id="songInput" style="cursor:pointer;position:fixed;overflow:scroll;background:#3CBC8D;right:66px;top:240px;width:240px;height:350px;display: none">
+       	<span onclick="closeSongInput()" style="color:white;margin-left: 220px;">X</span>
        	<br><br>
-       	源id：<input id="sourceId" placeholder="必填" name="sourceId" type="text"><br>
+       	源id：<input id="sourceId" placeholder="必填，资源id" name="sourceId" type="text"><br>
        	歌名：<input id="songName" placeholder="必填" name="songName" type="text"><br>
        	歌手：<input id="singer" placeholder="必填" name="singer" type="text"><br>
        	专辑：<input id="album" placeholder="选填" name="album" type="text"><br>
-       	时长：<input id="duration" placeholder="选填" name="duration" type="text"><br>
-       	发行：<input id="releaseTime" placeholder="选填" name="releaseTime" type="text"><br>
+       	时长：<input id="duration" placeholder="选填，歌曲总时长" name="duration" type="text"><br>
+       	发行：<input id="releaseTime" placeholder="选填，发行日期" name="releaseTime" type="text"><br>
        	来源：<select name="website">
 		  			<option value="网易云音乐">网易云音乐</option>
 		  			<option value="QQ音乐">QQ音乐</option>
 		  			<option value="酷我音乐">酷我音乐</option>
 		  		</select><br>
-       	描述：<input id="descr" placeholder="选填" name="descr" type="text"><br>
-       	<span onclick="addSong()" style="margin-left: 66px;margin-top: 11px;">录入</span> 
+       	描述：<input id="descr" placeholder="选填" name="descr" type="text"><br><br>
+       	<span onclick="addSong()" style="margin-left: 108px;background: red;font-size:16px;color:white">录入</span> 
     </form>
+    <div><img id="albumImg" alt="" style="width:150px;height:150px;border-radius:100px" src="http://img.duola.vip/image/album_logo.png"></div>
      <div id="alyric" style=""></div>
-    <!-- 其他工具#3f4156：上一曲，下一曲，播放暂停，进度条，音量加减，播放列表显示与隐藏按钮 -->
-	<div id="bottom" style="background: #009688;position:fixed;bottom:0;width:100%;height:50px;left:1px;right:10px">
+    <!-- 10-17取消背景background: #009688;	其他工具#3f4156：上一曲，下一曲，播放暂停，进度条，音量加减，播放列表显示与隐藏按钮 -->
+	<div id="bottom" style="position:fixed;bottom:0;width:100%;height:50px;left:1px;right:10px;cursor: pointer;">
 		<div style="margin-top: 5px;margin-left: 200px">
 			<img style="width: 30px;height: 30px;margin-bottom:5px;left:50px;" title="alt+左键--上一曲" onclick="preview()" alt="" src="http://img.duola.vip/image/play_previous.png">&emsp;
 			<img style="width: 30px;height: 30px;margin-bottom:5px;" title="alt+P键--暂停/播放" id="pause" alt="" onclick="pause_play()" src="http://img.duola.vip/image/play.png">&emsp;
 		    <img style="width: 30px;height: 30px;margin-bottom:5px;" title="alt+右键--下一曲" onclick="next()" alt="" src="http://img.duola.vip/image/play_next.png">
-			<img id="mode" title="顺序播放--alt+C键切换" style="width:30px;height:40px;" src="http://img.duola.vip/image/play_order.png" onclick="change()">
-			<progress title="alt+A键---快退10秒,alt+D键---快进10秒;alt+Q键---快退5秒,alt+E键---快进5秒" style="width:566px;height:10px;margin-bottom: 18px" draggable="false" id="pro" value="0" max="100"></progress>
-			<span id="time"  class="time" title="已播放/总时长" style="color:white;padding-bottom: 16px;"></span>&emsp;
-			<a onclick="minus()" style="padding-bottom: 16px;" class="minus" title="alt+下键--音量减">一</a>&emsp;
-			<progress style="width:90px;margin-bottom: 14px;" draggable="false" id="voice" value="100" max="100"></progress>&emsp;
-			<a onclick="add()" style="padding-bottom: 16px;" class="add" title="alt+上键--音量加">✚</a>&emsp;
-			<i class="Hui-iconfont" id="lock" onclick="fixBottom()" style="font-size: 15px;display: inline-block;">&#xe605;</i>
-			<i class="Hui-iconfont"  id="unlock" onclick="unfixBottom()" style="font-size: 15px;display:none">&#xe60e;</i>
+			 
+			<!-- <i class="Hui-iconfont" style="color:white;font-size:22px;position:relative;bottom:11px;" title="alt+左键--上一曲" onclick="preview()">&#xe6db;</i>&emsp;
+			<i class="Hui-iconfont" style="color:white;font-size:22px;position:relative;bottom:11px;" id="pause" title="alt+P键--暂停/播放" onclick="pauseOrplay()">&#xe6e5;</i>&emsp;
+			<i class="Hui-iconfont" style="color:white;font-size:22px;position:relative;bottom:11px;" title="alt+右键--下一曲" onclick="next()">&#xe6e3;</i>&emsp;
+			 -->
+			 <img id="mode" title="顺序播放--alt+C键切换" style="width:30px;height:40px;" src="http://img.duola.vip/image/play_order.png" onclick="change()">
+			
+			<input type="range" id="pro" onclick="alterProcess()" value="0" max="100" title="alt+A键---快退10秒,alt+D键---快进10秒;alt+Q键---快退5秒,alt+E键---快进5秒" style="width:566px;height:5px;position:relative;bottom: 16px">
+			<!-- <progress title="alt+A键---快退10秒,alt+D键---快进10秒;alt+Q键---快退5秒,alt+E键---快进5秒" style="width:566px;height:10px;margin-bottom: 18px" draggable="false" id="pro" value="0" max="100"></progress> -->
+			<span id="time"  class="time" title="已播放/总时长" style="color:white;position:relative;bottom: 13px;left:11px">--:--/--:--</span>&emsp;
+			<i class="Hui-iconfont" title="关闭/开启音量" onclick="alterVolume(0)" style="color:white;font-size:18px;position:relative;bottom: 13px;">&#xe62f;</i>
+			<input type="range" title="alt+下键--音量减/alt+上键--音量加" onclick="alterVolume(1)" style="width:120px;height:5px;position:relative;bottom: 16px;" id="voice" value="100" max="100">
+			<!-- <a onclick="alterVolume(2)" style="color:white;position:relative;bottom: 13px;margin-left:11px" class="minus" title="alt+下键--音量减">一</a> -->
+			<!-- <progress title="alt+下键--音量减/alt+上键--音量加" onclick="alterVolume(1)" style="width:90px;margin-bottom: 14px;" draggable="false" id="voice" value="100" max="100"></progress> -->
+			<!-- <a onclick="alterVolume(3)" style="color:white;font-size:22px;position:relative;bottom: 13px;" class="add" title="alt+上键--音量加">+</a>&emsp; -->
+			<i class="Hui-iconfont" title="定位到当前播放歌曲" onclick="locateNowPlay(1)" style="color:white;font-size:22px;position:relative;bottom: 13px;">&#xe6c9;</i>
 		</div>
 	</div>
+	
+	<script type="text/javascript" src="hui/static/h-ui/js/H-ui.min.js"></script>
+	<script type="text/javascript" src="hui/static/h-ui.admin/js/H-ui.admin.js"></script> <!--/_footer 作为公共模版分离出去-->
+	
     <script type="text/javascript">
-   		
+    loadMyInfo();
+    function loadMyInfo(){
+    	var userId=getCookie("userId")+"";
+    	if(userId){
+    		//$("#selfinfo").html('');
+    		var url="note/userinfo/getAuthorInfoByUserId.do?UUserId="+userId;
+			$.ajax({
+				url:url,
+				type:"get",
+				async:false,
+				dataType:"Json",
+				success:function(res){
+					var data=res.result;
+					document.getElementById("headImg").src="http://img.duola.vip/image/tx/"+data.headImage+".jpg";
+					document.getElementById("headImg").title='你好，'+data.uuserName+'\r\n点击头像可控制显示或隐藏顶部栏';
+				}
+			});
+    		
+    	}else{
+    		$("#selfinfo").html("<i class='Hui-iconfont' style='font-size:15px'>&#xe60d;</i><span onclick='loginOper()' style='margin-left:3px;font-size:12px'>登录</span>")
+    	}
+    }
+    function loginOper(){
+    	var r=confirm("此处暂不支持登录，将为你跳转至首页www.duola.vip进行登录")
+		if(r==true){
+			window.open("http://www.duola.vip/","_blank")
+		}else{
+	    	vant.Toast('此处不支持登录，请前往首页www.duola.vip进行登录')
+		}
+    }
+    var isShow=1;
+    function hideOrShow(){
+    	if(isShow==1){
+	    	$('.other').css('display','none');
+	    	$('#albumImg').css('marginRight','232px');
+	    	isShow=0;
+			vant.Toast('再次点击可显示顶部栏')
+    	}else{
+    		$('.other').css('display','inline-block');
+    		$('#albumImg').css('marginRight','80px');
+    		isShow=1;
+			vant.Toast('再次点击可隐藏顶部栏')
+    	}
+    }
     	//window.addEventListener("mousemove",hideBottom);
-    	
     	/* window.onbeforeunload = function(){
 			
 		} 
-    	
     	$(function(){
 		  　　$(window).unbind('beforeunload');
 		  　　window.onbeforeunload = null;
@@ -142,6 +215,8 @@
 			} 
    		}
     	*/
+    	
+    	
     </script>
   </body>
 </html>

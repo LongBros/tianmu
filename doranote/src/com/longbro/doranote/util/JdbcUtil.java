@@ -22,11 +22,31 @@ public class JdbcUtil {
 		static final String user="root";
 		static final String pass="ZCLZY";
 //	}
-	
+	public static Connection openConnection() throws SQLException{
+		if(conn==null||conn.isClosed()){
+			try {
+				Class.forName(driver);
+				conn=DriverManager.getConnection(url,user,pass);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return conn;
+	}
+	public static void closeConnection(){
+		if(conn!=null){
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
 	public static void insertOrUpdate(String insertSql){
 		try {
-			Class.forName(driver);
-			conn=DriverManager.getConnection(url,user,pass);
+			conn=openConnection();
 			st=conn.createStatement();
 			st.execute(insertSql);
 			logger.info("插入成功");
@@ -46,8 +66,7 @@ public class JdbcUtil {
 	}
 	public static ResultSet select(String selectSql){
 		try {
-			Class.forName(driver);
-			conn=DriverManager.getConnection(url,user,pass);
+			conn=openConnection();
 			st=conn.createStatement();
 			rs=st.executeQuery(selectSql);
 			logger.info("查询成功");

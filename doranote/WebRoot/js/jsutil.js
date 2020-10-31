@@ -2,6 +2,10 @@
 *一些公用的函数方法
 *
 **/
+//2.弹出登录框
+function login_popup() {
+    $("#loginModal").modal("show");
+}
 /**
  * 1.日记列表处理日记内容
  */
@@ -10,6 +14,9 @@ function handleCon(content){
 	//var reg1=/<(?!img).*?>/g;//保留img标签
 	//var reg2=/<\/?((?!img).)*?\/?>/g;
 	//var reg3=/<(?!img|p|/p).*?>/g;//保留img、p标签
+//	var regex1 = /\((.+?)\)/g; // () 小括号
+//	var regex2 = /\[(.+?)\]/g; // [] 中括号
+//	var regex3 = /\{(.+?)\}/g; // {} 花括号，大括号
 	var con=content+"";
 	con=con.replace(reg, "");
 	con=con.replace(new RegExp(":","gm"), "");
@@ -178,7 +185,8 @@ function getCookie(name){
 /**
  * 播放器中播放歌曲
  * @param sid	歌曲的哆啦id
- * type	1:音频，2：歌曲
+ * @param type	1:音频，2：歌曲
+ * return 0:普通异常（音频异常、已有音频） 1：添加成功 2：特殊异常（超出播放列表持音频数量限制）
  */
 function playerAudio(sid,type){
 	var userId=getCookie("userId")+"";
@@ -188,7 +196,7 @@ function playerAudio(sid,type){
 	}
 	
 	if(!sid)//部分用户可能家歌异常
-		return;
+		return 0;
 	sid=sid+"";
 	var showPlayer=getCookie("showPlayer")+"";//播放页面是否已显示
 	console.log("播放器显示状态(0未显示，1已显示):"+showPlayer)
@@ -203,22 +211,25 @@ function playerAudio(sid,type){
 		.replace(new RegExp("%3D","gm"),"=").replace(new RegExp("%2C","gm"),",");
 		var audio=audioList.split(",")
 		if(audio.length>maxLength){
-			console.log("播放列表中目前最多只能有"+maxLength+"个音频")
+			console.log("播放列表中目前最多只能有"+(maxLength+1)+"个音频")
 			if(maxLength==5){
 				alert("登录后可添加更多音频至列表，目前最多只能有6个音频")
 				login_popup()
 			}else{
 				alert("添加失败，超出播放列表持音频数量限制")
 			}
-			return;
+			return 2;
 		}
 		if(audio.indexOf(sid)==-1)
 			audio.push(sid)
-		else
+		else{
 			console.log("播放列表中已有此音频")
+			$.cookie('hasHas', '1,'+sid, { expires: 30, path: '/' });
+			return 0;
+		}
 		if(""==audio[0])
 			audio.splice(0,1)
-		console.log(audio)
+//		console.log(audio)
 		$.cookie('audioList', audio, { expires: 30, path: '/' });
 	}else{//歌曲	
 		var songLists=getCookie("songList")+"";
@@ -226,25 +237,28 @@ function playerAudio(sid,type){
 		.replace(new RegExp("%3D","gm"),"=").replace(new RegExp("%2C","gm"),",");
 		var song=songLists.split(",")
 		if(song.length>maxLength){
-			console.log("播放列表中目前最多只能有"+maxLength+"首歌曲")
+			console.log("播放列表中目前最多只能有"+(maxLength+1)+"首歌曲")
 			if(maxLength==5){
 				alert("登录后可添加更多歌曲至列表,目前最多只能有6首歌曲")
 				login_popup()
 			}else{
 				alert("添加失败，超出播放列表持歌数量限制")
 			}
-			return;
+			return 2;
 		}
 		if(song.indexOf(sid)==-1)
 			song.push(sid)
-		else
+		else{
+			$.cookie('hasHas', '2,'+sid, { expires: 30, path: '/' });
 			console.log("播放列表中已有此歌曲")
+			return 0;
+		}
 		if(""==song[0])
 			song.splice(0,1)
-		console.log(song)
+//		console.log(song)
 		$.cookie('songList', song, { expires: 30, path: '/' });//保存到cookie并设置有效时间为30天:
 	}
-	
+	return 1;
 }
 function addZero(word){
 	word=parseInt(word);
@@ -282,7 +296,7 @@ function searchMusic(from){
 			if(len>10){
 				len=10;
 			}
-			document.getElementById("songsList").innerHTML="<center>共搜索到<font color='red'>"+(data.length)+"</font>首歌曲(点击歌名试听)";
+			document.getElementById("songsList").innerHTML="<center><span style='font-size:10px'>共搜索到<font color='red'>"+(data.length)+"</font>首歌曲(点击歌名试听)</span>";
 
 			for(var k=0;k<len;k++){
 				//特殊显示搜索关键字
@@ -304,13 +318,12 @@ function searchMusic(from){
 					url="http://music.163.com/song/media/outer/url?id="+sid+".mp3";
 				}
 				if(from==2){//播放器中无需显示“选择”
-					$('#songsList').append("<br>&emsp;"+(k+1)+".<a onclick='playerAudio("+data[k].id+",2)'>"+na+"</a>");
+					$('#songsList').append("<br>&emsp;"+(k+1)+".<a title='歌手:"+data[k].singer+""+data[k].website+"' onclick='playerAudio("+data[k].id+",2)'>"+na+"</a>");
 				}else{
 					$('#songsList').append("<br>&emsp;"+(k+1)+".<a onclick='playerAudio("+data[k].id+",2)'>"+na+"</a>&emsp;&emsp;<a onclick='chooseSong(\""+sid+"\",\""+name+"\")'>选择</a>");
 				}
 			}
-			$('#songsList').append("<br><br>列表最多展示10首歌曲，");
-			$('#songsList').append("若搜不到你想选择的歌曲，可联系站长添加");
+			$('#songsList').append("<br><br><br><br><span style='color:red;font-size:10px'>列表中最多展示10首歌曲，若搜不到你想选择的歌曲，可联系站长获取录歌权限之后添加歌曲（Q群：415086137）</span><br><br>");
 		}
 	});
 }

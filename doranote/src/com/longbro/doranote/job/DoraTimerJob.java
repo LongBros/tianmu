@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import org.apache.commons.lang.StringUtils;
@@ -22,8 +23,10 @@ import com.longbro.doranote.bean.NoteBook;
 import com.longbro.doranote.bean.UserInfo;
 import com.longbro.doranote.service.NoteBookService;
 import com.longbro.doranote.service.UserInfoService;
+import com.longbro.doranote.spider.SpideNetEase;
+import com.longbro.doranote.spider.SpideWechat;
+import com.longbro.doranote.util.HttpClientUtils;
 import com.longbro.doranote.util.JdbcUtil;
-import com.longbro.doranote.util.SpideWechat;
 import com.longbro.doranote.util.Strings;
 import com.longbro.doranote.util.TimeUtil;
 
@@ -150,5 +153,26 @@ public class DoraTimerJob {
 			nb.setNType(4);nb.setNLocation(loc);nb.setnWriteDevice("spider");
 			nbs.addNote(nb);
 		}
+	}
+	//定时每周五0点		0 0 0 ? * FRI
+	@Scheduled(cron="${dora.job.spideNetEase}")
+	public void spideNetEase(){
+		log.info("周五0点,开始爬取网易云音乐的热歌榜");
+		long start=System.currentTimeMillis();
+		String url="https://music.163.com/discover/toplist?id=3778678";
+		List<HashMap<String, String>> songs=SpideNetEase.getAllSongByUrl(url);
+		
+		String requrl="http://m.duola.vip" + "/addSong.do";
+		for(HashMap<String, String> param:songs){//遍历并插入数据库
+//			Map<String, String> param=new HashMap<>();
+//			param.put("sourceId", song.get("sourceId"));param.put("songName", song.get("songName"));
+//			param.put("singer",song.get("singer"));param.put("duration",song.get("duration"));
+//			param.put("album",song.get("album"));param.put("imgPath",song.get("imgPath"));
+			param.put("releaseTime", "");param.put("website","网易云音乐");param.put("downSong","0");
+			param.put("descr",param.get("descr")+","+TimeUtil.getToday()+"由机器自动爬取");param.put("time",TimeUtil.time());
+			log.info("请求地址：" + requrl + "===>>>请求参数：" + param);
+			HttpClientUtils.httpPostMethod(requrl, param);
+		}
+		log.info("爬取歌曲并录入数据库共计耗时："+(System.currentTimeMillis()-start));
 	}
 }

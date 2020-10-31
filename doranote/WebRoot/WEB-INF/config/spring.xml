@@ -34,8 +34,7 @@
 		<property name="testOnReturn" value="false"/>
 		<!-- 打开PSCache，并且指定每个连接上PSCache的大小 -->
 		<property name="poolPreparedStatements" value="true"/>
-		<property name="maxPoolPreparedStatementPerConnectionSize"
-			value="20"/>
+		<property name="maxPoolPreparedStatementPerConnectionSize" value="20"/>
 	</bean>
 	<!-- 输出可执行的SQL 未采用 org.slf4j.Logger;		而采用org.apache.log4j.Logger;-->
 	<!-- <bean id="logFilter" class="com.alibaba.druid.filter.logging.Slf4jLogFilter">

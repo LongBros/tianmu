@@ -32,12 +32,12 @@ import com.longbro.doranote.bean.Diary;
 import com.longbro.doranote.bean.NoteBook;
 import com.longbro.doranote.job.DoraTimerJob;
 import com.longbro.doranote.service.NoteBookService;
+import com.longbro.doranote.spider.SpideLapuda;
+import com.longbro.doranote.spider.SpideWechat;
 import com.longbro.doranote.util.FileProduce;
 import com.longbro.doranote.util.ImageProduce;
 import com.longbro.doranote.util.JdbcUtil;
 import com.longbro.doranote.util.NumberUtil;
-import com.longbro.doranote.util.SpideLapuda;
-import com.longbro.doranote.util.SpideWechat;
 import com.longbro.doranote.util.Strings;
 import com.longbro.doranote.util.TimeUtil;
 
@@ -498,14 +498,14 @@ public class NoteBookController{
     	if(StringUtils.isEmpty(perPage+"")){
     		perPage=20;
     	}
-    	int max=0;//最大页数
-//    	09-16 统计	音频1332		其中歌曲486
+//    	10-17统计	音频1479		其中歌曲559
+    	int max=0,songNum=559,allNum=1479;
     	if(onlySong==1){//只查歌曲
-    		max=486/perPage;
+    		max=songNum/perPage;
     	}else if(onlySong==2){//查询非歌曲
-    		max=(1332-486)/perPage;
+    		max=(allNum-songNum)/perPage;
     	}else{//都查
-    		max=1332/perPage;
+    		max=allNum/perPage;
     	}
 //    	if(StringUtils.isEmpty(page+"")){
         	page=NumberUtil.getRandomNum(max);//随机生成一个大于0小于等于最大页数的整数
@@ -521,7 +521,7 @@ public class NoteBookController{
     	return result;
     }
     /**
-     * @desc 根据日记id批量获取日记
+     * @desc 16.根据日记id批量获取日记
      * @Author dora
      * @time 2020年10月6日 下午7:05:11
      * @param str
@@ -533,10 +533,17 @@ public class NoteBookController{
     	BaseResult<List<Diary>> result=new BaseResult<>();
     	List<Diary> list=noteBookService.getAudioByIds(ids);
     	result.setCode(200);
-    	result.setMessage("成功批量获取日记");
+    	result.setMessage("成功批量获取音频日记");
     	result.setResult(list);
     	return result;
     }
+    /**
+     * @desc 17.手动爬取未爬取过的人民日报的日记（与自动爬取一起使用）
+     * @Author dora
+     * @time 2020年10月17日 上午9:42:21
+     * @return
+     * @throws Exception
+     */
     @RequestMapping(value="spideDaily")
     @ResponseBody
     public BaseResult spideDaily() throws Exception{

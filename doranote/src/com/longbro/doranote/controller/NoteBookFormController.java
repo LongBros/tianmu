@@ -42,10 +42,10 @@ import com.longbro.doranote.service.CommentDiaryService;
 import com.longbro.doranote.service.NoteBookService;
 import com.longbro.doranote.service.UserInfoService;
 import com.longbro.doranote.service.VisitService;
+import com.longbro.doranote.spider.SpideLapuda;
 import com.longbro.doranote.util.ContextUtil;
 import com.longbro.doranote.util.FileProduce;
 import com.longbro.doranote.util.ImageProduce;
-import com.longbro.doranote.util.SpideLapuda;
 import com.longbro.doranote.util.Strings;
 import com.longbro.doranote.util.TimeUtil;
 
@@ -98,6 +98,15 @@ public class NoteBookFormController{
     	ModelAndView mv=new ModelAndView();
     	mv.setViewName("/diary");
     	mv.addObject("diary",nb);//日记信息
+    	String description=nb.getNContent();
+    	description=description.replaceAll("<[.[^<]]*>", "").replaceAll("\r\n","");
+    	if(description.length()<5){
+    		description=nb.getNWritter()+"于"+nb.getNTime()+"写的日记："+nb.getNTitle()+"";
+    	}else if(description.length()<100){
+    	}else{
+    		description=description.substring(0, 99)+"...";
+    	}
+    	mv.addObject("description",description);
     	if(maps.size()>0){
     		mv.addObject("message",maps.get(0));//未读消息
     	}
@@ -108,7 +117,7 @@ public class NoteBookFormController{
 //    		mv.addObject("comments",comments);//当前日记下的评论
 //    	}
 //    	mv.addObject("url",req.getLocalAddr()+req.getContextPath()+"/diary/"+nb.getNId()+".do");
-    	mv.addObject("url","http://www.duola.vip/diary/"+nb.getNId()+".do");
+    	mv.addObject("url","http://www.duola.vip/diary/"+nb.getNId());
     	
     	Visit visit=new Visit();
     	visit.setVDiary(id+"");visit.setVVisited(nb.getNWritter());visit.setVVisitor(userId);

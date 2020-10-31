@@ -42,9 +42,10 @@ function loadDiary(id){
 				//
 				var audioInfo="";
 				var songDoraId='';
-				if(data.audioInfo){
-					audioInfo="&emsp;<span style='font-size:8px'>本文含有歌曲音频：<a href='http://m.duola.vip/amaze/songsList.jsp' target='_blank' style='color:red'>"+data.audioInfo+"</a>，点击标题后方按钮可唤起播放</span><br><br>";
-					songDoraId=(data.audioInfo+'').substring(0, (data.audioInfo+'').indexOf("-"))
+				var ai=data.audioInfo+'';
+				if(ai){
+					audioInfo="&emsp;<span style='font-size:8px'>本文含有歌曲音频：<a href='http://m.duola.vip/amaze/songsList.jsp' target='_blank' style='color:red'>"+ai.substring(ai.indexOf("-")+1)+"</a>，点击标题后方按钮可唤起播放</span><br><br>";
+					songDoraId=ai.substring(0, ai.indexOf("-"))
 					songDoraId=""+songDoraId+",2";
 				}else{
 					songDoraId=""+id+",1";

@@ -1,4 +1,4 @@
-package com.longbro.doranote.util;
+package com.longbro.doranote.spider;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -8,6 +8,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
+import com.longbro.doranote.util.TimeUtil;
 
 
 /**

@@ -76,8 +76,15 @@ function loadDiary(from,author,page,perPage,userId){
 				var cate=getCateById(data[i].ntype);
 				//是否有音频
 				var music=0;//默认无音频
+				var fun='';
+				var ai=data[i].audioInfo
 				if(data[i].nSongId!=null&&data[i].nSongId!=''){
 					music=1;//有音频
+					if(ai){
+						fun="playerAudio("+ai.substring(0, ai.indexOf("-"))+",2)";
+					}else{
+						fun="playerAudio("+data[i].nid+",1)";
+					}
 				}
 				var com="";
 				if(data[i].nallowComment==0){//允许评论的才显示评论图标
@@ -100,7 +107,7 @@ function loadDiary(from,author,page,perPage,userId){
 				var wordSize="",ti="";
 				if(show==1){
 					wordSize="("+data[i].wordSize+"字)";
-					if(data[i].audioInfo){//含有音频
+					if(ai){//含有音频
 						ti=ti+"title='该篇日记共计"+data[i].wordSize+"字(包含格式所占字符),\r含有音频歌曲："+data[i].audioInfo+"'";
 					}else{
 						ti="title='该篇日记共计"+data[i].wordSize+"字(包含格式所占字符)'";
@@ -133,7 +140,7 @@ function loadDiary(from,author,page,perPage,userId){
 				//onclick='openOther(0,"+data[i].nid+")'	href=\"diary.html?"+data[i].nid+"\"
 				$("#diarys").append("<div class=\"diary\">"+tx+"<a  onclick='openOther(0,"+data[i].nid+","+data[i].nauthority+")' "+ti+">"+con+"</a><br>"
 				+"<div class='info'>"+au+"<i class=\"Hui-iconfont\">&#xe690;</i>"+data[i].ntime
-				+"&emsp;<i class=\"Hui-iconfont\">&#xe681;</i>"+cate+"&nbsp;:<span title='"+data[i].ntitle+"'>"+title+"</span>&nbsp;<span>"+(music=='1'?'<font color=\'red\' title=\'有音频喔\'>'+wordSize+'音</font>':'<font color=\'red\'>'+wordSize+'</font>')+"</span>&emsp;<i class=\"Hui-iconfont\">&#xe6c9;</i><span title='"+data[i].nlocation+"'>"+loc
+				+"&emsp;<i class=\"Hui-iconfont\">&#xe681;</i>"+cate+"&nbsp;:<span title='"+data[i].ntitle+"'>"+title+"</span>&nbsp;<span>"+(music=='1'?'<font color=\'red\' title=\'有音频喔，点此加入播放列表\'>'+wordSize+'<img onclick=\''+fun+'\'  style="width: 16px;height: 16px" src="http://img.duola.vip/image/playing1.gif"\'></font>':'<font color=\'red\'>'+wordSize+'</font>')+"</span>&emsp;<i class=\"Hui-iconfont\">&#xe6c9;</i><span title='"+data[i].nlocation+"'>"+loc
 				+"</span><div class='zan'><i class=\"Hui-iconfont\">&#xe725;</i>"+data[i].visitNum+com
 				
 				+"&nbsp;<i class=\"Hui-iconfont\" style=\"color:"+color+"\"  onclick='praiseDiary("+data[i].nid+","+data[i].nwritter+","+i+")'  id=\"diary"+i+"\">&#xe66d;</i><span id=\"praiseNum"+i+"\" >"+data[i].praiseNum
@@ -471,7 +478,7 @@ function openNotice(){
 				}else{
 					title="《"+title+"》";
 				}
-				if(data[i].nTop==1){//站长置顶
+				if(data[i].nTop>1){//站长置顶
 					title=title+"<font color='red'>(置顶)</font>"
 				}
 				var userName=data[i].userName;
@@ -556,7 +563,7 @@ function loadYesterDiary(){
 				var con="";
 				if(listStyle==0){
 					con=handleCon(data[i].ncontent);
-					console.log(con);
+//					console.log(con);
 					if(con.length>250){
 						con=con.substring(0,250)+"......";
 					}
@@ -569,7 +576,7 @@ function loadYesterDiary(){
 				}else{
 					title="《"+title+"》";
 				}
-				if(data[i].nTop==1){//站长置顶
+				if(data[i].nTop>1){//站长置顶
 					title=title+"<font color='red'>(置顶)</font>"
 				}
 				var userName=data[i].userName;
@@ -658,7 +665,11 @@ function praiseDiary(diaryId,author,index){
 	});
 }
 //17	09-05加载音频日记
+var allSong=[];//要批量加入列表的歌曲
+var allAudio=[];//要批量加入列表的音频
 function openAudio(){
+	allSong=[];
+	allAudio=[];
 	$("#diarys").text("");
 	$(".pages").text('');
 	$.ajax({
@@ -690,8 +701,10 @@ function openAudio(){
 				if(!audioInfos||audioInfos==''||audioInfos=='null'){//非歌曲的音频，以日记名作为音频信息
 					audioInfos="音频："+res[i].ntitle;
 					songDoraId="\""+res[i].nid+"\",1";
+					allAudio.push(res[i].nid);
 				}else{
 					songDoraId=audioInfos.substring(0, audioInfos.indexOf("-"))
+					allSong.push(songDoraId);
 					songDoraId="\""+songDoraId+"\",2";
 					audioInfos="歌曲："+audioInfos.substring(audioInfos.indexOf("-")+1);
 				}
@@ -702,7 +715,6 @@ function openAudio(){
 				}
 				var img="";
 				if(res[i].nwritter=='88888888'){
-					//img
 					var j=Math.floor(Math.random() * 10);
 					if(j<5){
 						img=imgs[j];
@@ -713,12 +725,10 @@ function openAudio(){
 					img="http://img.duola.vip/image/tx/"+res[i].headImage+".jpg";
 				}
 				
-				
-				
 				$("#diarys").append("<div class='notebook' title='点击播放"+audioInfos+"'>" +
 						"<img onclick='playerAudio("+songDoraId+")' title='"+res[i].userName+"于"+res[i].ntime+"分享' src='"+img+"'>"
 						+"<div class='bookinfo'>"
-						+"<span onclick='playerAudio("+songDoraId+")'>"+audioInfo+"</span><img style='width: 12px;height: 12px' src='http://img.duola.vip/image/playing.gif'/>"
+						+"<span onclick='playerAudio("+songDoraId+")'>"+audioInfo+"</span><img style='width: 12px;height: 12px' src='http://img.duola.vip/image/playing1.gif'/>"
 						+"<br><span><a title='进去看看这篇文章' href='diary/"+res[i].nid
 						+"'>读原文</a>&emsp;<a  title='进去看看作者' href='http://www.duola.vip/author.html?"+res[i].nwritter
 						+"' target='_blank'>作者："+res[i].userName+"</a></span></div></div>"
@@ -727,6 +737,34 @@ function openAudio(){
 			
 		}
 	});
+}
+//10-31 播放多个音频
+function playAllAudio(){
+	if(allSong.length==0&&allAudio.length==0){//不在聆听tab时先切到聆听tab
+//		alert("请先切换到聆听tab再使用一键播放所有音频功能");
+//		return;
+		switchTab(4);
+	}
+	console.log("begin->开始将音频批量加入至播放列表")
+	var successSongNum=0;
+	var successAudioNum=0;
+	for(var i=0;i<allSong.length;i++){
+		var ifSuc= playerAudio(allSong[i],2);
+		if(ifSuc==1){
+			successSongNum++;
+		}else if(ifSuc==2){//超出播放列表持音频数量限制，break后会只弹一次弹窗
+			break;
+		}
+	}
+	for(var i=0;i<allAudio.length;i++){
+		var ifSuc= playerAudio(allAudio[i],1);
+		if(ifSuc==1){
+			successAudioNum++;
+		}else if(ifSuc==2){//超出播放列表持音频数量限制
+			break;
+		}
+	}
+	console.log("end->音频批量添加成功，歌曲："+successSongNum+"，音频："+successAudioNum)
 }
 /**
 **
