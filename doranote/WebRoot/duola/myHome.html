@@ -31,7 +31,7 @@
 							 
 							  <p class="com_title">
 								  <span style="color:red" v-if="song.match_type==3">{{index+1}}.&emsp;</span><span style="color:green" v-if="song.match_type!=3">{{index+1}}.&emsp;</span>
-								  <span @click="chooseSong(song.sourceId,song.songName+'-'+song.singer,song.status,song.use_time)">
+								  <span @click="chooseSong(song.sourceId,song.songName+'-'+song.singer,song.status,song.use_time,song.id)">
 									  <span style="color:gray" v-if="song.status==1">{{song.songName}}</span><span style="color:red" v-if="song.match_type==1&&song.status==0">{{song.songName}}</span><span v-if="song.match_type!=1&&song.status==0">{{song.songName}}</span>
 										-
 									  <span style="color:gray" v-if="song.status==1">{{song.singer}}</span><span style="color:red" v-if="song.match_type==2&&song.status==0">{{song.singer}}</span><span v-if="song.match_type!=2&&song.status==0">{{song.singer}}</span>
@@ -238,6 +238,7 @@
 			window.location="http://m.duola.vip/";
 		}
 		var dayNum="";
+		var ifHas=0;
 		var app=new Vue({
 			el:'#app',
 			data:{
@@ -252,7 +253,8 @@
 				key:'',//待搜索的关键字
 				searchBox:false,//搜索框的显示与否
 				searchTitle:'',
-				goodTip:'输入歌名、歌手或歌词关键词'
+				goodTip:'输入歌名、歌手或歌词关键词',
+				ifHas:0
 				
 			},
 			created:function(){
@@ -294,6 +296,7 @@
 				.catch(function (error) {
 					console.log(error);
 				})
+				
 			},
 			methods:{
 				genDiary:function(){
@@ -351,8 +354,30 @@
 					console.log(img);
 					vant.ImagePreview(img)
 				},openSearBox(){
-					var index = Math.floor(Math.random()*100);
+					//2021-01-16判断今日是否已预约歌曲
+					$.ajax({
+						url:'http://www.duola.vip/note/bookSong/getBookSongBy.do?userId='+author,
+						async:false,
+						type:"GET",
+						dataType:"Json",
+						success:function(response){
+							if(response.code=="200"){//存cookie过程放至后端代码
+								var result=response.result;
+								if(result&&result.length>0){
+									vant.Toast("您今日已点过歌曲‘"+result[0].singer+"’的‘"+result[0].songName+"’，请明日再来熬^-^")
+									ifHas=1;
+								}
+							}
+
+						}
+					});
 					
+					if(ifHas==1){
+						return;
+					}
+
+					
+					var index = Math.floor(Math.random()*100);
 					this.searchBox=true;
 					
 					var page=random(1, 17);
@@ -405,13 +430,11 @@
 							app.songs=response.data.result;
 							app.searchTitle="共搜索到"+response.data.num+"首歌曲";
 						}
-						
-						
 					})
 					.catch(function (error) {
 						console.log(error);
 					})
-				},chooseSong(sourceId,name,status,use_time){
+				},chooseSong(sourceId,name,status,use_time,id){
 					use_time=use_time+"";
 					if(use_time.length>15){
 						use_time="在‘"+use_time.substring(0,10)+"’";
@@ -424,13 +447,28 @@
 					}
 					var con=confirm("确定预约点歌‘"+name+"’?今天您还可预约1首")
 					if(con==true){
-						vant.Toast("抱歉，点歌失败，站长承诺2021年1月份上线，敬请期待");
+						//vant.Toast("抱歉，点歌失败，站长承诺2021年1月份上线，敬请期待");
+						//var param1={
+						//		BUserId:author,
+						//		BSongId:id
+						//}
+						let param = new FormData();
+						param.append('BUserId',author);
+						param.append('BSongId',id)
+						axios.post('http://www.duola.vip/note/bookSong/create.do', param
+								,{ headers:{ 'Content-Type':'application/json' }},
+								  ).then(function (response) {
+									    console.log(response.data);
+										if(response.data.code==200){
+											vant.Toast(response.data.message);
+										}
+									  })
+						this.searchBox=false;
 					}else{
 						
 					}
 					//this.audioName=name;
 					//this.audio=sourceId;
-					//this.searchBox=false;
 				}
 			}
 		})
@@ -504,6 +542,7 @@
 			alert("已退出");
 			window.location="http://m.duola.vip/";
 		}
+		
 	</script>
 	</body>
 </html>

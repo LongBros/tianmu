@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.longbro.tianmu.bean.BookSong">
-	<resultMap id="BookSong" type="com.longbro.tianmu.bean.BookSong">
+<mapper namespace="com.longbro.doranote.bean.BookSong">
+	<resultMap id="BookSong" type="com.longbro.doranote.bean.BookSong">
 		<id property="BId" column="b_id" jdbcType="NUMERIC"/>
 		<result property="BUserId" column="b_user_id" jdbcType="NUMERIC"/>
 		<result property="BSongId" column="b_song_id" jdbcType="NUMERIC"/>
@@ -9,7 +9,7 @@
 		<result property="BBookDevice" column="b_book_device" jdbcType="VARCHAR"/>
 	</resultMap>
 	
-	<insert id="create" parameterType="com.longbro.tianmu.bean.BookSong">
+	<insert id="create" parameterType="com.longbro.doranote.bean.BookSong">
 		INSERT INTO d_book_song
 		(b_id,b_user_id,b_song_id,b_book_time,b_book_device)
 		VALUES 
@@ -19,7 +19,7 @@
 	<select id="get"   parameterType="java.lang.String" resultMap="BookSong">
 		SELECT * FROM d_book_song 
 		WHERE 
-		"Long"=#{"Long"}
+		b_id=#{BId}
 	</select>
 	
 	<select id="query" parameterType="java.util.Map" resultMap="BookSong">
@@ -33,11 +33,11 @@
 			ORDER BY ${orderBySql}
 		</if>
 		<if test="@Ognl@isEmpty(orderBySql)">
-			ORDER BY "Long" DESC
+			ORDER BY b_id DESC
 		</if>
 	</select>
 	
-	<update id="update" parameterType="com.longbro.tianmu.bean.BookSong">
+	<update id="update" parameterType="com.longbro.doranote.bean.BookSong">
 		UPDATE d_book_song
         <set>
 			<if test="BUserId != null">
@@ -54,14 +54,27 @@
 			</if>
 		</set>
 		WHERE
-		"Long"=#{"Long"}
+		b_id=#{BId}
 	</update>
 	
 	<delete id="remove" parameterType="java.lang.String">
 		DELETE FROM d_book_song 
 		WHERE
-		"Long"=#{"Long"}
+		b_id=#{BId}
 	</delete>
-	
-	
+	<!-- 01-16获取预约点的歌 -->
+	<select id="getBookSongBy" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT dbs.*,
+		s.songName songName,s.sourceId sourceId,s.singer singer,s.lyric lyric,s.id id,dui.u_user_name userName
+		FROM d_book_song dbs
+		INNER JOIN song s on dbs.b_song_id=s.id
+		INNER JOIN d_user_info dui on dbs.b_user_id=dui.u_user_id
+		 WHERE 1=1
+		 <if test="userId!='' and userId !=null">
+		 	 and b_user_id=#{userId}
+		 </if>
+		 <if test="date!='' and date!=null">
+		 	 and LEFT(b_book_time,10)=#{date}
+		 </if>
+	</select>
 </mapper>

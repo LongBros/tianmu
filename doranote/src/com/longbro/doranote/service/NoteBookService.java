@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
 import com.longbro.doranote.BaseResult;
+import com.longbro.doranote.bean.BookSong;
 import com.longbro.doranote.bean.Diary;
 import com.longbro.doranote.bean.NoteBook;
 import com.longbro.doranote.dao.NoteBookDao;
@@ -27,6 +28,8 @@ import com.longbro.doranote.util.TimeUtil;
 @Service
 public class NoteBookService{
 	@Autowired NoteBookDao dao;
+	@Autowired
+	BookSongService bss;
 	public void addNote(NoteBook nb) {
 		// TODO Auto-generated method stub
 		dao.addNote(nb);
@@ -144,14 +147,31 @@ public class NoteBookService{
 			System.out.println(">>>>>>>>>>>>>将生成用户"+account+"的日记");
 			String table="poem";
 			String idd="";//日记在原本数据表中的ID，方便修改状态为“已使用”状态
+			HashMap<String, Object> map=null;
 			if(account==88888888){
 				table="song";
+				//首先看预约表中是否有数据
+				List<HashMap<String, Object>> bsongs=bss.getBookSongBy(null, TimeUtil.getYesterday());//昨天预约的歌曲
+				if(bsongs!=null&&bsongs.size()>0){//昨天有用户预约，从中随机选择一首歌曲
+					System.out.println("【预约点歌】>>>>>>>>>>>>>歌词网"+account+"用户预约的内容数量为"+bsongs.size());
+					int i=new Random().nextInt(bsongs.size());
+					System.out.println("【预约点歌】>>>>>>>>>>>>>用户"+account+"今日将被使用的预约内容的序号为"+i);
+					map=bsongs.get(i);
+				}else{
+					List<HashMap<String, Object>> list=getDiaryByTable(table);
+					System.out.println(">>>>>>>>>>>>>用户"+account+"未被使用的内容数量为"+list.size());
+					int i=new Random().nextInt(list.size());
+					System.out.println(">>>>>>>>>>>>>用户"+account+"今日将被使用的内容的序号为"+i);
+					map=list.get(i);
+				}
+			}else{
+				List<HashMap<String, Object>> list=getDiaryByTable(table);
+				System.out.println(">>>>>>>>>>>>>用户"+account+"未被使用的内容数量为"+list.size());
+				int i=new Random().nextInt(list.size());
+				System.out.println(">>>>>>>>>>>>>用户"+account+"今日将被使用的内容的序号为"+i);
+				map=list.get(i);
 			}
-			List<HashMap<String, Object>> list=getDiaryByTable(table);
-			System.out.println(">>>>>>>>>>>>>用户"+account+"未被使用的内容数量为"+list.size());
-			int i=new Random().nextInt(list.size());
-			System.out.println(">>>>>>>>>>>>>用户"+account+"今日将被使用的内容的序号为"+i);
-			HashMap<String, Object> map=list.get(i);
+			
 			NoteBook nb=new NoteBook();
 			nb.setNWritter(account+"");
 			nb.setNTime(TimeUtil.getToday()+" "+Calendar.HOUR+":"+TimeUtil.genRandomTime(1));//2020-09-05用回随机时间
@@ -165,7 +185,12 @@ public class NoteBookService{
 			nb.setnUserTop(0);
 //			System.out.println(">>>>>>>>>>>>>用户"+account+"今日被使用的内容的实体为"+new Gson().toJson(map));
 			if(account==88888888){//歌曲
-				nb.setNTitle(map.get("songName")+"-"+map.get("singer"));
+				String bookUserName="";//2021-01-16点歌的用户
+				if(StringUtils.isNotEmpty(map.get("userName")+"")&&!"null".equals(map.get("userName")+"")){
+					bookUserName="【由"+map.get("userName")+"点播】";
+				}
+				
+				nb.setNTitle(map.get("songName")+"-"+map.get("singer")+bookUserName);
 				nb.setNContent("<p style='text-align: center;'>"+map.get("lyric")+"</p>");
 				nb.setnSongId(map.get("sourceId")+"");
 				nb.setNLocation("河南省平顶山市");

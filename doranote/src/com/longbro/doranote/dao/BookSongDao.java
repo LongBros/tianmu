@@ -1,10 +1,12 @@
 package com.longbro.doranote.dao;
 
+import java.util.HashMap;
 import java.util.List;
 
 import com.longbro.doranote.bean.BookSong;
 import com.longbro.doranote.dao.BookSongDao;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Repository;
 /**
  * 描述：点歌台预约点歌表 
@@ -20,6 +22,12 @@ public class BookSongDao extends BaseDao{
 	}
 	public void create(BookSong bean) {
 		this.insert(getNamespace()+".create", bean);
+	}
+	public List<HashMap<String, Object>> getBookSongBy(String userId,String date){
+		HashMap<String, String> map=new HashMap<>();
+		map.put("userId", userId);
+		map.put("date", date);
+		return this.selectList(getNamespace()+".getBookSongBy", map);
 	}
 }
 

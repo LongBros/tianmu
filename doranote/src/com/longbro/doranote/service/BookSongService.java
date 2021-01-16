@@ -1,5 +1,6 @@
 package com.longbro.doranote.service;
 
+import java.util.HashMap;
 import java.util.List;
 
 import com.longbro.doranote.bean.BookSong;
@@ -23,6 +24,10 @@ public class BookSongService{
 	@Autowired BookSongDao dao;
 	public void create(BookSong bean) {
 		dao.create(bean);
+	}
+	
+	public List<HashMap<String, Object>> getBookSongBy(String userId,String date){
+		return dao.getBookSongBy(userId, date);
 	}
 }
 
