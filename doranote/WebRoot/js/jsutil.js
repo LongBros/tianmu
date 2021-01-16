@@ -277,26 +277,35 @@ function closeSearch(){
 	$("#searchSong").css("display","none");
 }
 //19.搜索框变动时搜索歌曲
+var allSong=[];//要批量加入列表的歌曲
 function searchMusic(from){
+	allSong=[];
 //	var key=document.getElementById("key").value+"";
 	var key=$("#key").val();
 	if(key==""){
 		return;
 	}
+//	var url="http://m.duola.vip/querySongs.do?key="+key;
+	var url="http://m.duola.vip/strongQuerySongs2.do?key="+key;
 	$.ajax({
 		type:"Get",
 		async:false,
-		url:"http://m.duola.vip/querySongs.do?key="+key,
+		url:url,
 		dataType:"json",
 		success:function(data){
+			data=data.result;
 			var len=data.length;
 			if(len==0){
 				return;
 			}
-			if(len>10){
-				len=10;
+//			if(len>10){
+//				len=10;
+//			}
+			var txt="(点击歌名试听)";
+			if(from==2&&len<30){
+				txt="<br>(点击歌名播放单曲，<span style='color:red' onclick='playAllSong()'>点此播放所有)</span>";
 			}
-			document.getElementById("songsList").innerHTML="<center><span style='font-size:10px'>共搜索到<font color='red'>"+(data.length)+"</font>首歌曲(点击歌名试听)</span>";
+			document.getElementById("songsList").innerHTML="<center><span style='font-size:10px'>共搜索到<font color='red'>"+(data.length)+"</font>首歌曲"+txt+"</span>";
 
 			for(var k=0;k<len;k++){
 				//特殊显示搜索关键字
@@ -317,15 +326,33 @@ function searchMusic(from){
 				}else{
 					url="http://music.163.com/song/media/outer/url?id="+sid+".mp3";
 				}
+				allSong.push(data[k].id);
 				if(from==2){//播放器中无需显示“选择”
 					$('#songsList').append("<br>&emsp;"+(k+1)+".<a title='歌手:"+data[k].singer+""+data[k].website+"' onclick='playerAudio("+data[k].id+",2)'>"+na+"</a>");
 				}else{
 					$('#songsList').append("<br>&emsp;"+(k+1)+".<a onclick='playerAudio("+data[k].id+",2)'>"+na+"</a>&emsp;&emsp;<a onclick='chooseSong(\""+sid+"\",\""+name+"\")'>选择</a>");
 				}
 			}
-			$('#songsList').append("<br><br><br><br><span style='color:red;font-size:10px'>列表中最多展示10首歌曲，若搜不到你想选择的歌曲，可联系站长获取录歌权限之后添加歌曲（Q群：415086137）</span><br><br>");
+			$('#songsList').append("<br><br><br><br><span style='color:red;font-size:10px'>列表中最多展示50首歌曲，若搜不到你想选择的歌曲，可联系站长获取录歌权限之后添加歌曲（Q群：415086137）</span><br><br>");
 		}
 	});
+}
+//12-13 播放多个音频---->从index1.js搬过来改后的
+function playAllSong(){
+	if(allSong.length==0){//不在聆听tab时先切到聆听tab
+		return;
+	}
+	console.log("begin->开始将歌曲批量加入至播放列表")
+	var successSongNum=0;
+	for(var i=0;i<allSong.length;i++){
+		var ifSuc= playerAudio(allSong[i],2);
+		if(ifSuc==1){
+			successSongNum++;
+		}else if(ifSuc==2){//超出播放列表持音频数量限制，break后会只弹一次弹窗
+			break;
+		}
+	}
+	console.log("end->音频批量添加成功，歌曲："+successSongNum)
 }
 function random(min, max){
 	// 若max不存在 min 赋值给max,并重新赋值min
@@ -334,6 +361,61 @@ function random(min, max){
 		min = 0;
 	}
 	return min+ Math.floor(Math.random()*(max-min+1))
+}
+function getQueryString(name) {
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i"); 
+    var r = window.location.search.substr(1).match(reg); 
+    if (r != null) return unescape(r[2]); 
+    return null; 
+}
+/**
+ * 4.处理日记内容
+ * @param content
+ * @returns
+ */
+function handleCon1(content){
+	var con=""+content;//&emsp;&emsp;
+	con=con.replace(new RegExp("&amp;","gm"), "&");
+	con=con.replace(new RegExp("&lt;","gm"), "<");
+	con=con.replace(new RegExp("::::","gm"), ".jpg'>");
+	con=con.replace(new RegExp(":::","gm"), ".png'>");
+	con=con.replace(new RegExp("::","gm"), ".gif'>");
+	con=con.replace(new RegExp("<<<","gm"), "<img alt='' width='20px' height='20px' src='http://img.duola.vip/image/expre/newtieba/");
+	con=con.replace(new RegExp("<<","gm"), "<img alt='' width='20px' height='20px' src='http://img.duola.vip/image/expre/tieba/");
+	con=con.replace(new RegExp("&&&&","gm"), "<img alt='' width='20px' height='20px' src='http://img.duola.vip/image/expre/weibo/");
+	con=con.replace(new RegExp("&&&","gm"), "<img alt='' width='20px' height='20px' src='http://img.duola.vip/image/expre/huang/");
+	con=con.replace(new RegExp("&&","gm"),"<img alt='' width='20px' height='20px' src='http://img.duola.vip/image/expre/aodamiao/");
+	//修改“古诗网”内容的img
+	con=con.replace(new RegExp("uploads/allimg","gm"), "http://www.exam58.com/uploads/allimg");
+	return con.replace(new RegExp("<br>","gm"), "<br>&emsp;&emsp;");
+}
+//15.检测访问设备
+//平台、设备和操作系统
+function monitor(){
+	//平台、设备和操作系统
+	var system ={win : false,mac : false,xll : false};
+	//检测平台
+	var p = navigator.platform;
+	system.win = p.indexOf("Win") == 0;
+	system.mac = p.indexOf("Mac") == 0;
+	system.x11 = (p == "X11") || (p.indexOf("Linux") == 0);
+	//跳转语句，如果是手机访问就自动跳转到wap.baidu.com页面
+	var url=window.location+"";
+	console.log("当前链接："+url)
+	if(!system.win && !system.mac && !system.xll){
+		console.log("手机访问")
+		if(url.indexOf("www.duola.vip")!=-1){//手机端访问www.duola.vip
+			window.open("http://m.duola.vip/", "_self")
+		}
+	}else{
+		console.log("PC访问")
+		if(url.indexOf("m.duola.vip")!=-1&&url.indexOf("alarm")==-1){//电脑端访问m.duola.vip
+			var c=confirm("你访问的是哆啦网移动端，点击确定为你跳转至哆啦网pc端，点击取消继续访问移动端")
+			if(c==true){
+				window.open("http://www.duola.vip/", "_self")
+			}
+		}
+	}
 }
 /**
 *一些公用的函数方法

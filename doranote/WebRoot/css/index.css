@@ -6,8 +6,21 @@ body{
 	position: fixed;
 	bottom:35px;
 	float: right;
+	margin-right:66px;
 	cursor: pointer;
 	left: 95%;
+}
+.dora_qr{
+	width:128px;height:158px;
+	float: right;position:fixed;bottom:40px;background:white;
+	margin-left:1310px;display:none;
+}
+#dora_qr_pic{
+	width:128px;height:128px;
+}
+.dora_qr span{
+	font-size:12px;
+	margin-left: 23px;
 }
 #searchSong::-webkit-scrollbar {
    	display: none;
@@ -20,4 +33,19 @@ body{
   border: none;
   background-color: gray;
   color: white;
+}
+#sponsorImage{
+	display:none;background:#009688;width:200px;
+	bottom:60px;height:240px;position:fixed;
+	float:left;cursor: pointer;
+}
+#sponsorImage:after{
+	content: "";
+    width: 16px;
+    height: 16px;
+    position: absolute;
+    left: 50%;
+    bottom: -18px;
+    transform: translateX(-50%) rotate(45deg);
+    background: pink;
 }

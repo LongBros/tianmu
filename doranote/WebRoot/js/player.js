@@ -91,7 +91,8 @@ function loadAudio(which){
 			}
 		});
 		$(".songs").html('')
-		ajaxLoadSongs(pList,1)
+		songIds=','+pList+','
+		ajaxLoadSongs(songIds,1)
 		
 		vant.Toast("已为你加载"+pList.length+"首新录入歌曲")
 //		$("#newInputnum").html(pList.length);
@@ -142,7 +143,7 @@ function loadSongList(){
 	if((songs.length==0||(songs.length==1&&songs[0]==""))&emptyAlert==0){
 		var r=confirm("系统检测到你的歌曲播放列表为空，将为你随机生成播放列表？\r\n（你也可以前往哆啦网添加歌曲至播放列表）")
 		if(r==true){
-			var pList=new Array();//清空原播放列表数组
+			var pList=new Array();
 			for(var i=0;i<20;i++){
 				var n=random(1,sysSongNum);
 				pList[i]=n;
@@ -242,9 +243,12 @@ function ajaxSongs(type){
 function ajaxLoadSongs(list,which){
 	//加载歌曲列表
 	$.ajax({
-		type:"Get",
+		type:"Post",
 		async:false,
-		url:"http://m.duola.vip/queryPListSong.do?pList="+list,
+		url:"http://m.duola.vip/querySongsByIds.do",
+		data:{
+			ids:list
+		},
 		dataType:"Json",
 		success:function(data){
 			songInfo=data;
@@ -301,15 +305,22 @@ function ajaxLoadSongs(list,which){
 					html="<i class='Hui-iconfont' onclick='playAudios(1,"+k+",\""+data[k].sourceId+"\")'>&#xe6e6;</i>"+
 					"&nbsp;<i class='Hui-iconfont' onclick='playerAudio("+data[k].id+",2)'>&#xe604;</i>";
 				}
+				var mv=data[k].mv_path+"";
+				if(mv&&mv.length>3){
+					mv="<a href='"+mv+"' target='_blank' style='color:white;background:gray;font-size:12px;margin-left:6px'>&nbsp;MV&nbsp;</a>";
+				}else{
+					mv="";
+				}
+				
 				$('.songs').append("<tr style='' onmouseout=\"hidePlayBtn(this,"+data[k].id+")\" onmouseover=\"showPlayBtn(this,"+data[k].id+")\" ondblclick='playAudios(1,"+k+",\""+data[k].sourceId+"\")' id='songName"+k+"'>" +
 						"<th style='width:6%;'><input type='checkbox' id='chooseIndex"+k+"' onclick='chooseWhich("+k+")'></th>"+
 						"<td style='width:8%;' id='xu"+k+"'>"+(k+1)+"&emsp;</td>" +
 						"<td style='width:23%;'><span><a title='"+data[k].songName+"-"+data[k].playNum+"次播放'>"+na+"</a>" +
 						"&nbsp;<span style='visibility:hidden;' id='playBtn"+data[k].id+"'>" +
-						html+
+						html+mv+
 						"</span></span></td>" +
 						
-						"<td style='width:22%;padding-left:33px'><a onclick=\"\" title='"+data[k].singer+"'>"+singer+"</a></td>" +
+						"<td style='width:22%;padding-left:33px'><a onclick=\"searchSinger('"+data[k].singer+"')\" title='"+data[k].singer+"'>"+singer+"</a></td>" +
 						"<td style='width:13%;padding-left:10px'><a href='"+url+"'  target='_blank'><img width='14px' height='14px' src='"+website+"'></a></td>" +
 						"<td style='width:13%;padding-left:20px'>"+dura+"</td>"+
 						"<td style='width:13%;padding-left:30px'><i onclick='editDiary("+data[k].id+")' class='Hui-iconfont'>&#xe60c;</i>"+
@@ -347,7 +358,7 @@ function ajaxLoadAudio(list){
 						"&nbsp;<i class='Hui-iconfont' onclick='addToSongList(1,"+songInfo[k].nid+")'>&#xe604;</i>"+
 						"</span></span></td>" +
 						
-						"<td style='width:22%;padding-left:33px'><a onclick=\"\" title='"+songInfo[k].userName+"'>"+songInfo[k].userName+"</a></td>" +
+						"<td style='width:22%;padding-left:33px'><a href='http://www.duola.vip/author.html?"+songInfo[k].nwritter+"' target='_blank' title='"+songInfo[k].userName+"'>"+songInfo[k].userName+"</a></td>" +
 						"<td style='width:13%;padding-left:13px'><a href='http://www.duola.vip/diary/"+songInfo[k].nid+"'  target='_blank'><img width='14px' height='14px' src='http://img.duola.vip/image/logo/dlam.jpg'></a></td>"+
 						"<td style='width:13%;padding-left:20px'>--</td>"+
 						"<td style='width:13%;padding-left:30px'></td>"+
@@ -396,6 +407,7 @@ function getDuration(sid){//getDuration(data[k].sourceId)
 	}else if(sid.substring(sid.length-4)==".aac"||
 			sid.substring(sid.length-4)==".m4a"||
 			sid.substring(sid.length-4)==".mp3"||
+			sid.indexOf("dmhmusic")!=-1||			//部分喜马拉雅的音频例如https://audio04.dmhmusic.com/141_129_T10049736101_320_4_1_0_sdk-cpm/cn/0209/M00/78/95/ChR47FzSc1uAOUQFAF7Zzr3FBUM189.mp3?xcode=14e97439a4d4047c788c1d81405e78eed10398e
 			sid.indexOf("voice")!=-1){//微信的音频例：https://res.wx.qq.com/voice/getvoice?mediaid=MzI0NDI3MTE4MF8yNjU3NDU1Nzk0
 		url=sid;
 	}else{
@@ -498,6 +510,7 @@ function playAudios(from,index,sid){
 	}else if(sid.substring(sid.length-4)==".aac"||
 			sid.substring(sid.length-4)==".m4a"||
 			sid.substring(sid.length-4)==".mp3"||
+			sid.indexOf("dmhmusic")!=-1||			//部分喜马拉雅的音频例如https://audio04.dmhmusic.com/141_129_T10049736101_320_4_1_0_sdk-cpm/cn/0209/M00/78/95/ChR47FzSc1uAOUQFAF7Zzr3FBUM189.mp3?xcode=14e97439a4d4047c788c1d81405e78eed10398e
 			sid.indexOf("voice")!=-1){//微信的音频例：https://res.wx.qq.com/voice/getvoice?mediaid=MzI0NDI3MTE4MF8yNjU3NDU1Nzk0
 		url=sid;
 	}else{
@@ -577,7 +590,6 @@ function playAudios(from,index,sid){
 					}
 				}
 			});
-
 		}
 		if(1==1){//网易云音乐、QQ音乐、553Music加载其单句歌词，酷我音乐添加播放记录	
 //			var u="http://music.163.com/api/song/lyric?id="+sid+"&lv=1&kv=1&tv=-1";//不支持跨域
@@ -624,11 +636,11 @@ function playAudios(from,index,sid){
 	var btn=document.getElementById("pause");
 	btn.src="http://img.duola.vip/image/play.png";
 	if(what=="0"){//
-		document.title=songInfo[index].songName+"-正在播放...|哆啦网"
-		vant.Toast(songInfo[index].songName)
+		document.title=songInfo[index].songName+"-"+songInfo[index].singer+"-正在播放...|哆啦网"
+		vant.Toast(songInfo[index].songName+"-"+songInfo[index].singer)
 	}else{
-		document.title=songInfo[index].ntitle+"-正在播放...|哆啦网"
-		vant.Toast(songInfo[index].ntitle)
+		document.title=songInfo[index].ntitle+"-"+songInfo[index].userName+"-正在播放...|哆啦网"
+		vant.Toast(songInfo[index].ntitle+"-"+songInfo[index].userName)
 	}
 	alterStatus(index);
 	locateNowPlay();
@@ -736,7 +748,11 @@ function monitor() {
 			lrc=getSingleLyric(getTime(ctime),nowId)
 		}
 		if(lrc){
-			document.getElementById("lyric").innerHTML=lrc;
+			if(lrc.length<25){
+				document.getElementById("lyric").innerHTML=lrc;
+			}else{//2020-01-03单句歌词长时滚动显示
+				document.getElementById("lyric").innerHTML="<marquee>"+lrc+"</marquee>";
+			}
 		}
 	}
 	
@@ -999,7 +1015,7 @@ function randomPList(num){
 	createList(songIds,1);
 	
 	$(".songs").html('')
-	ajaxLoadSongs(pList,1)
+	ajaxLoadSongs(songIds,1)
 }
 function createList(songs,from){
 	var userId=getCookie("userId")+"";
@@ -1040,7 +1056,8 @@ function loadHotSongs(num){
 		}
 	});
 	$(".songs").html('')
-	ajaxLoadSongs(pList,1)
+	var songIds=","+pList+",";
+	ajaxLoadSongs(songIds,1)
 }
 
 //打开音乐录入框
@@ -1097,8 +1114,8 @@ function addSong(){
 }
 function switchTab(which){
 	switch(which){
-		case 0:
-			vant.Toast('秉着优质内容分享计划，本站部分音频来自第三方网站，本站方不提供存储服务，\r\n'+
+		case 0://vant.Toast
+			alert('秉着优质内容分享计划，本站部分音频来自第三方网站，本站方不提供存储服务，\r\n'+
 					'如有侵犯您的合法权益，敬请联系邮箱1459892910@qq.com告知，谢谢！')
 			window.open("https://support.qq.com/products/136712/faqs/81685","_blank")
 			break;
@@ -1167,4 +1184,9 @@ function stopRotateCircle(){
 function rotateLogo(){
 	document.getElementById("albumImg").style.transform="rotate("+deg+"deg)";//
 	deg=deg+5;
+}
+function searchSinger(singer){
+	openMusic();
+	$("#key").val(singer);
+	searchMusic(2);
 }

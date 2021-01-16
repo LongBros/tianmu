@@ -30,7 +30,6 @@ import com.google.gson.Gson;
 import com.longbro.doranote.BaseResult;
 import com.longbro.doranote.bean.Diary;
 import com.longbro.doranote.bean.NoteBook;
-import com.longbro.doranote.job.DoraTimerJob;
 import com.longbro.doranote.service.NoteBookService;
 import com.longbro.doranote.spider.SpideLapuda;
 import com.longbro.doranote.spider.SpideWechat;
@@ -391,10 +390,13 @@ public class NoteBookController{
      */
 	 @RequestMapping({"markImage"})
 	  @ResponseBody
-	  public void markImage(String imgurl, HttpServletResponse res)
-	    throws IOException
-	  {
-	    String filePath = Strings.imgPath+"image/diary/" + imgurl;
+	  public void markImage(String imgurl,HttpServletRequest req, HttpServletResponse res)
+	    throws IOException{
+		String type=req.getParameter("type");
+		String filePath = Strings.imgPath+"image/diary/" + imgurl;
+		 if(StringUtils.isNotEmpty(type)&&"acc".equals(type)){
+			 filePath = Strings.imgPath+"image/acc/" + imgurl;
+		 }
 	    BufferedImage bi = ImageProduce.markText(filePath, "DoraWeb: www.duola.vip", new Font("宋体", 1, 36), Color.PINK, 30, 31);
 	    
 	    res.setContentType("image/jpeg");
@@ -488,7 +490,7 @@ public class NoteBookController{
      * @desc 15.获取第page页的音频日记
      * @Author dora
      * @time 2020年9月08日 下午12:26:23
-     * @param page
+     * @param page页码 	perPage每页数量 	onlySong是否只歌曲	 websiteId歌曲源站id
      * @return
      */
     @RequestMapping(value="getAudioDiary",method=RequestMethod.GET)
@@ -498,8 +500,8 @@ public class NoteBookController{
     	if(StringUtils.isEmpty(perPage+"")){
     		perPage=20;
     	}
-//    	10-17统计	音频1479		其中歌曲559
-    	int max=0,songNum=559,allNum=1479;
+//    	10-17统计	音频1479		其中歌曲559		11-07音频1561	其中歌曲585
+    	int max=0,songNum=641,allNum=1694;
     	if(onlySong==1){//只查歌曲
     		max=songNum/perPage;
     	}else if(onlySong==2){//查询非歌曲
@@ -513,6 +515,7 @@ public class NoteBookController{
     	
     	HashMap<String, Object> map=new HashMap<>();
 		map.put("pageIndex", (page-1)*10);map.put("perPage", perPage);map.put("onlySong", onlySong);
+		map.put("websiteId", "");//0:网易云音乐、1:酷我音乐、2:QQ音乐、3:其他
     	logger.info("将加载第"+page+"页的音频,查询参数->>>>"+map);
     	List<Diary> list=noteBookService.getAudioDiary(map);
     	result.setCode(200);

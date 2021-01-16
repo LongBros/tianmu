@@ -28,7 +28,7 @@
 							<span class="right"><a @click="alertMenu(0,comment.reviewer,comment.reviewerName,2)"><img width="16px" src="images/dian.png"></a></span>
 						</p>
 					  </div>
-					  <p class="com_title">{{comment.reviewContent}}</p>
+					  <p class="com_title"><div v-html="comment.reviewContent"></div></p>
 					  
 				  </div>
 			  </div>
@@ -270,7 +270,7 @@
 			editDiary:function(index){
 				var c=confirm("将跳转到编辑日记界面"+app.contentData[index].nid);
 				if(c==true){
-					window.location="http://www.duola.vip/duola/new.html?id="+app.contentData[index].nid;
+					window.location="http://m.duola.vip/new.html?id="+app.contentData[index].nid;
 					//this.$toast("暂不支持编辑日记");
 				}
 			},
@@ -287,7 +287,7 @@
 			},dianzan:function(diaryId,author,index){
 					if(!user){
 						vant.Toast("请先登录");
-						window.location="http://www.duola.vip/duola/login.html";
+						window.location="http://m.duola.vip/login.html";
 						return;
 					}
 					var ifPraise=app.contentData[index].ifPraise;
@@ -356,6 +356,10 @@
 						console.log(response.data.result)
 						app.comTitle="共"+response.data.result.length+"条评论";
 						app.comments=response.data.result;
+						for(var i=0;i<app.comments.length;i++){
+							var con=app.comments[i].reviewContent
+							app.comments[i].reviewContent=handleCon1(con);
+						}
 					}
 				  })
 				  .catch(function (error) {

@@ -69,6 +69,17 @@
 					</a>
 				</li>
 				<li>
+				  <a onclick="openAcc()"><!--  :href="'accList.html?author='+userData.uuserId" -->
+					<div class="user_list_left">
+						<van-icon name="orders-o"/>
+						<span class="list_text">ta的账单</span>
+					</div>
+					<p style="">
+						<img class="jiantou" src="http://m.lianzhigou.cn/public/images/smallArrow.png" >
+					</p>
+					</a>
+				</li>
+				<li>
 					<a :href="'comment.html?author='+userData.uuserId">
 						<div class="user_list_left">
 							<img  src="http://m.lianzhigou.cn/public/images/mine2.png" >
@@ -144,7 +155,7 @@
 			author=url.substring(url.indexOf("?")+1);
 		}
 		if(author==user){//被查看的作者与登录人一样是，跳转到家园页
-			window.location="http://www.duola.vip/duola/myHome.html";
+			window.location="http://m.duola.vip/myHome.html";
 		}
 		var dayNum="";
 		var authorName="";
@@ -307,6 +318,9 @@
 		
 		function toast(){
 			vant.Toast(authorName+"累积写日记"+dayNum+"天\n图解：星星=1天，月亮="+7+"天，\n太阳="+7*7+"天，皇冠="+7*7*7+"天");
+		}
+		function openAcc(){
+			vant.Toast("暂不支持，敬请期待");
 		}
 	</script>
 	</body>

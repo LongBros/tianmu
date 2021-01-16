@@ -75,8 +75,9 @@
 							        <!--<span class="right"><a @click="alertMenu(1,comment.reviewer,comment.reviewerName,comment.reviewId)"><img width="16px" src="images/dian.png"></a></span>-->
 							    </p>
 							  </div>
-							  <p class="com_title" @click="replyCom(comment.reviewId,comment.reviewer,comment.reviewerName)">{{comment.reviewContent}}</p>
-							  
+							  <p class="com_title" @click="replyCom(comment.reviewId,comment.reviewer,comment.reviewerName)">
+							  	<div v-html="comment.reviewContent"></div>
+							  </p>
 							  
 							  <div class="flex" v-for="reply in comment.replys">
 								  <div class="flex_left"><img width="" :src="'http://img.duola.vip/image/tx/'+reply.headImg+'.jpg'" ></div>
@@ -124,11 +125,17 @@
 									<!--已登录用户方显示，且在自己的日记后不显示-->
 									<span v-if="user!=''&&user!=mainData.nwritter" class="right"><a @click="alertMenu(0,mainData.nwritter,mainData.userName,mainData.ifNotice)"><img width="16px" src="images/dian.png"></a></span>
 								</p>
-								<span style="font-size: 12px;color: #737373;">作者：{{ mainData.userName }}</span>&emsp;<span style="font-size: 12px;color: #737373;float:right">时间：{{mainData.ntime}}</span>
+								<!-- <span >官方</span> -->
+								<span style="font-size: 12px;color: #737373;">
+								
+								<span v-if="mainData.identity==0" style="background:orange;color:white">官方</span>
+								<span v-if="mainData.identity==1">作者</span>
+								：{{ mainData.userName }}</span>
+								&emsp;<span style="font-size: 12px;color: #737373;float:right">时间：{{mainData.ntime}}</span>
 							</div>
 							<div class="list_main">
 								<p class="ellipsis mb10">
-									<span v-if="mainData.ncontent.length<150">{{mainData.ncontent}}</span>
+									<span v-if="mainData.ncontent.length<150" v-html="mainData.ncontent"></span>
 									 <span v-if="mainData.ncontent.length>150" :id="'content'+index">{{mainData.ncontent.substring(0,150)}}...&nbsp;<a @click="expandMore(index,mainData.ncontent)" style="color:blue">展开更多</a></span>
 									<span v-if="mainData.nauthority==2&&user==''">&nbsp;<a href="login.html" style="color:red">登录</a>&nbsp;后可见喔。<br>(pc端访问哆啦网www.duola.vip，优先体验更丰富的功能。)</span>
 								</p>
@@ -154,6 +161,7 @@
 							</van-row>
 
 						</div>
+						<video v-if="index==-1" width='425px' height='200px' controls='controls' autoplay src='http://other.web.nf03.sycdn.kuwo.cn/c91ee6f79a09fadc9b23be6682577df8/5ff31850/resource/m3/31/92/2541068526.mp4'></video>
 					</div>
 				</van-list>
 			</van-pull-refresh>
@@ -177,7 +185,8 @@
 	<!-- <script src="https://unpkg.com/axios/dist/axios.min.js"></script> -->
 	<script src="https://cdn.bootcss.com/axios/0.19.0/axios.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/vant@2.4/lib/vant.min.js"></script>
-	<script>
+	<script  type="text/javascript">
+			monitor();//监控是pc或移动端访问
 			var user="";
 			user=getCookie("userId")+"";
 			var userNick=decodeURI(decodeURI(getCookie("userNick")+""));
@@ -267,8 +276,8 @@
 				},
 				methods:{
 					expandMore:function(index,allCon){
-						document.getElementById("content"+index).innerText=allCon;
-						console.log(allCon)
+						vant.Toast(allCon.length)
+						document.getElementById("content"+index).innerHTML=allCon;
 					},yulanImg:function(index,images){
 						let img=[];
 						//for(var i=0;i<images.length;i++){//2020-04-05添加水印
@@ -349,7 +358,7 @@
 					onLoad() {
 						if(!user&&app.page>2){//2020-04-05 限制未登录者只可查看两页内容
 							vant.Toast('请先登录后方可查看更多内容');
-							setTimeout(function(){ window.location="http://www.duola.vip/duola/register.html"; }, 2000);
+							setTimeout(function(){ window.location="http://m.duola.vip/register.html"; }, 2000);
 							return;
 						}
 						axios.get('http://www.duola.vip/note/diary/getDiaryBy.do?author=&page='+app.page+'&authority='+au+'&perPage=5&user='+user)
@@ -357,9 +366,14 @@
 								//console.log('加载数据');	
 								var tempData=response.data;
 								//console.log(tempData);
-								var reg=/<[^<>]+>/g ;
 								for(var i=0;i<tempData.length;i++){
 									//tempData[i].headImage="http://img.duola.vip/image/tx/"+tempData[i].headImage+".jpg";
+									if(tempData[i].nwritter=="1314521"||tempData[i].nwritter=="88888888"||tempData[i].nwritter=="28596763"){
+										tempData[i].identity="0"
+									}else{
+										tempData[i].identity="1";
+									}
+									
 									tempData[i].nmood=getMoodById(tempData[i].nmood);
 									tempData[i].ntype=getCateById(tempData[i].ntype);
 									tempData[i].nweather=getWeaById(tempData[i].nweather);
@@ -398,25 +412,13 @@
 												}
 											}
 											con=con.substring(0,con.indexOf("ppiiccttuurree"));
-											//console.log("去除图片的内容："+con);
-											//console.log("图片："+tempData[i].images);
 										}
-										
+										var reg=/<[^<>]+>/g ;
 										con=con.replace(reg, "");
-										con=con.replace(new RegExp("nbsp;","gm"), "");
-										con=con.replace(new RegExp(":","gm"), "");
-										con=con.replace(new RegExp("<","gm"), "");
-										con=con.replace(new RegExp("&","gm"), "");
-										//if(con.length>200){
-											//tempData[i].ncontent=con.substring(0,200)+"&emsp;展开更多";
-										//}else{
-											tempData[i].ncontent=con;
-										//}
+										con=handleCon1(con);
+										tempData[i].ncontent=con;
 									}
 								}
-								//console.log('处理后的数据');	
-								//console.log(tempData);
-								//console.log(audios);
 								app.contentData.push(...tempData);
 								app.loadingText="加载中...当前已加载"+app.contentData.length+"篇日记";
 								app.page++;
@@ -430,7 +432,7 @@
 					},dianzan:function(diaryId,author,index){
 						if(!user){
 							vant.Toast("请先登录");
-							window.location="http://www.duola.vip/duola/login.html";
+							window.location="http://m.duola.vip/login.html";
 							return;
 						}
 						var ifPraise=app.contentData[index].ifPraise;
@@ -472,7 +474,7 @@
 						}else{
 							vant.Toast("开始播放音频..."+"，第"+nowplay+"个音频");			
 						}
-						document.getElementById("playBtn"+index).innerHTML="<img style='width: 13px;height: 13px' src='http://img.duola.vip/image/playing.gif'/>";
+						document.getElementById("playBtn"+index).innerHTML="<img style='width: 13px;height: 13px' src='http://img.duola.vip/image/playing1.gif'/>";
 						let sid=audioId;
 						var url=getUrlById(sid);
 						
@@ -507,6 +509,8 @@
 								app.comments=response.data.result;
 								console.log(app.comTitle)
 								for(var i=0;i<app.comments.length;i++){//comment.reviewId，赋值评论的回复
+									var con=app.comments[i].reviewContent
+									app.comments[i].reviewContent=handleCon1(con);
 									app.getReplyById(app.comments[i],app.comments[i].reviewId);//将app.comments[i]传过去以赋值规避了promise的问题
 									//console.log("回复");
 									//console.log(app.comments[i].replys)
@@ -599,7 +603,7 @@
 							}else if(which==1){//关注
 								if(!user){
 									vant.Toast("请先登录");
-									window.location="http://www.duola.vip/duola/login.html";
+									window.location="http://m.duola.vip/login.html";
 								}
 								url='http://www.duola.vip/note/diary/noticeUserDiary.do?user='+user+'&n=10';
 							}else if(which==3){//昨天
@@ -616,7 +620,6 @@
 									contentData=response.data;
 								}
 								console.log(contentData);
-								var reg=/<[^<>]+>/g ;
 								for(var i=0;i<contentData.length;i++){
 									contentData[i].ntime=handleTime(contentData[i].ntime);
 									contentData[i].nmood=getMoodById(contentData[i].nmood);
@@ -645,13 +648,10 @@
 												}
 											}
 											con=con.substring(0,con.indexOf("ppiiccttuurree"));
-											console.log("去除图片的内容："+con);
-											console.log("图片："+contentData[i].images);
 										}
+										var reg=/<[^<>]+>/g ;
 										con=con.replace(reg, "");
-										con=con.replace(new RegExp(":","gm"), "");
-										con=con.replace(new RegExp("<","gm"), "");
-										con=con.replace(new RegExp("&","gm"), "");
+										con=handleCon1(con);
 										contentData[i].ncontent=con;
 									}									
 								}
@@ -709,7 +709,7 @@
 			function attenAuthor(type,userId){
 				if(user==""){
 					vant.Toast("请先登录");
-					window.location="http://www.duola.vip/duola/login.html";
+					window.location="http://m.duola.vip/login.html";
 					return;
 				}
 				var url="";//
@@ -728,7 +728,7 @@
 					console.log(response);
 					if(response.data.code==200){
 						vant.Toast(response.data.message);
-						window.location="http://www.duola.vip/duola/";
+						window.location="http://m.duola.vip/";
 					}
 				  })
 				  .catch(function (error) {
@@ -797,7 +797,7 @@
 				return url;
 			}
 			
-			window.setInterval("monitor()", 1000);
+			window.setInterval("monitor1()", 1000);
 			//上一曲
 			function previous(){
 				if(nowplay==0){
@@ -829,9 +829,9 @@
 			
 			}
 			//播放监听器，监听到当前播放完后自动切换到下一曲
-			function monitor() {
+			function monitor1() {
 				var p=document.getElementById("audio");//音乐播放控件
-				console.log(p.networkState)
+				//console.log(p.networkState)
 				if(p.networkState==3){//2正常，3异常
 			//		alert("出现了异常~_~");
 				}

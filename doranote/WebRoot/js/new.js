@@ -160,9 +160,10 @@ function oocImage(type,from){
 		if(expre.indexOf("newtieba") != -1){
 		}else{
 			var imgs=new Array("a","bishi","bugaoxing","caihong","chabei","damuzhi","dengpao","guai","haha","hahaxiao","han","hehe"
-		    		   ,"heixian","hu","huaji","huaxin","jingku","jingya","kaixin","ku","kuanghan","lei","len","liwu"
-		    		   ,"meiguai","mianqiang","pen","qian","qianbi","ruo","shengli","shengqi","shuijiao","taikaixin","tu","tushe"
-		    		   ,"weiqu","xiaoyan","yi","yinxian","yinyue","yiwen","zhenbang");
+		    		   ,"heixian","huaxin","huaji","huaxin","jingku","jingya","ku","kuanghan","landeli","lazhu","lei","liwu"
+		    		   ,"meigui","mianqiang","nidongde","nu","OK","pen","qianbi","shafa","shengli","shouzhi","shuijiao","suanshuang","taikaixin","taiyang"
+		    		   ,"tu","tushe","wabi","weiqu","what","wuzuixiao","xiangjiao","xiaoguai","xiaohonglian","xiaoniao","xiaoyan","xili"
+		    		   ,"xingxingyueliang","xinsui","yamiedie","yaowan","yinxian","yinyue","yiwen","zhenbang");
 			for(var i=0;i<imgs.length;i++){
 				$('#expre').append("<img alt='' src='http://img.duola.vip/image/expre/newtieba/"+imgs[i]+".png' onclick='appendValue(\"<<<"+imgs[i]+":::\","+from+")'>");
 			}
@@ -174,7 +175,7 @@ function oocImage(type,from){
 		}else{
 			var imgs=new Array("a","bishi","bugaoxing","caihong","chabei","damuzhi","dengpao","guai","haha","hahaxiao","han","hehe"
 		    		   ,"heixian","hu","huaji","huaxin","jingku","jingya","kaixin","ku","kuanghan","lei","len","liwu"
-		    		   ,"meiguai","mianqiang","pen","qian","qianbi","ruo","shengli","shengqi","shuijiao","taikaixin","tu","tushe"
+		    		   ,"meigui","mianqiang","pen","qian","qianbi","ruo","shengli","shengqi","shuijiao","taikaixin","tu","tushe"
 		    		   ,"weiqu","xiaoyan","yi","yinxian","yinyue","yiwen","zhenbang");
 			for(var i=0;i<imgs.length;i++){
 				$('#expre').append("<img alt='' src='http://img.duola.vip/image/expre/tieba/"+imgs[i]+".png' onclick='appendValue(\"<<"+imgs[i]+":::\","+from+")'>");
@@ -186,7 +187,7 @@ function oocImage(type,from){
 		if(expre.indexOf("weibo") != -1){
 		}else{
 			var imgs=new Array("aini","aoteman","baibai","baobao","beishang","bingbujiandan","bishi","bizui","chanzui","chigua","chijing","chongjing"
-		    		   ,"dahaqi","dalian","dingding","dog1","dog2","dog3","dog4","dog5","dog6","dog7","dog8","dog9"
+		    		   ,"dahaqi","dalian","ding","dog1","dog2","dog3","dog4","dog5","dog6","dog7","dog8","dog9"
 		    		   ,"dog10","dog11","dog12","dog13","dog4","dog5","doge","erha","feijie","feizao","ganmao","geili"
 		    		   ,"guile","guzhang","haha","haixiu","hehe","heixian","heng","huaxin","hufen","jiong","jiyan","keai",
 		    		   "kelian","ku","kun","landelini","lei","meng","miao","nanhaier","nu","numa","nvhaier","qian","qinqin",

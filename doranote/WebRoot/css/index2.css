@@ -21,6 +21,16 @@
 	padding-bottom: 5px;
 	cursor: pointer;
 }
+.top:after{
+	content: '';
+    background-image: url(http://img.duola.vip/image/useful/listFixedTop1.png);
+    width: 40px;
+    height: 40px;
+    display: block;
+    position: absolute;
+    top: 193px;
+    right: 264px;
+}
 .diary a{
 	
 }

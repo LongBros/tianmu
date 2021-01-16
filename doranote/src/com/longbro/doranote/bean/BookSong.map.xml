@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.longbro.tianmu.bean.BookSong">
+	<resultMap id="BookSong" type="com.longbro.tianmu.bean.BookSong">
+		<id property="BId" column="b_id" jdbcType="NUMERIC"/>
+		<result property="BUserId" column="b_user_id" jdbcType="NUMERIC"/>
+		<result property="BSongId" column="b_song_id" jdbcType="NUMERIC"/>
+		<result property="BBookTime" column="b_book_time" jdbcType="VARCHAR"/>
+		<result property="BBookDevice" column="b_book_device" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<insert id="create" parameterType="com.longbro.tianmu.bean.BookSong">
+		INSERT INTO d_book_song
+		(b_id,b_user_id,b_song_id,b_book_time,b_book_device)
+		VALUES 
+		(#{BId,jdbcType=NUMERIC}, #{BUserId,jdbcType=NUMERIC}, #{BSongId,jdbcType=NUMERIC}, #{BBookTime,jdbcType=VARCHAR}, #{BBookDevice,jdbcType=VARCHAR})
+	</insert>
+	
+	<select id="get"   parameterType="java.lang.String" resultMap="BookSong">
+		SELECT * FROM d_book_song 
+		WHERE 
+		"Long"=#{"Long"}
+	</select>
+	
+	<select id="query" parameterType="java.util.Map" resultMap="BookSong">
+		SELECT * FROM d_book_song
+		<where>
+			<if test="@Ognl@isNotEmpty(whereSql)">
+				${whereSql}
+			</if>
+		</where>
+		<if test="@Ognl@isNotEmpty(orderBySql)">
+			ORDER BY ${orderBySql}
+		</if>
+		<if test="@Ognl@isEmpty(orderBySql)">
+			ORDER BY "Long" DESC
+		</if>
+	</select>
+	
+	<update id="update" parameterType="com.longbro.tianmu.bean.BookSong">
+		UPDATE d_book_song
+        <set>
+			<if test="BUserId != null">
+				b_user_id=#{BUserId,jdbcType=NUMERIC},
+			</if>
+			<if test="BSongId != null">
+				b_song_id=#{BSongId,jdbcType=NUMERIC},
+			</if>
+			<if test="BBookTime != null">
+				b_book_time=#{BBookTime,jdbcType=VARCHAR},
+			</if>
+			<if test="BBookDevice != null">
+				b_book_device=#{BBookDevice,jdbcType=VARCHAR}
+			</if>
+		</set>
+		WHERE
+		"Long"=#{"Long"}
+	</update>
+	
+	<delete id="remove" parameterType="java.lang.String">
+		DELETE FROM d_book_song 
+		WHERE
+		"Long"=#{"Long"}
+	</delete>
+	
+	
+</mapper>

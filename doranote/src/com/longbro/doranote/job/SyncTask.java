@@ -4,13 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TimerTask;
 
-import javax.annotation.Resource;
-
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.longbro.doranote.controller.NoteBookController;
-import com.longbro.doranote.service.NoteBookService;
 import com.longbro.doranote.util.HttpClientUtils;
 
 public class SyncTask extends TimerTask {

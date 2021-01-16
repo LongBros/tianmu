@@ -7,10 +7,10 @@
 		<!-- 引入样式文件 -->
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vant@2.4/lib/index.css">
 		<link rel="stylesheet" type="text/css" href="css/base.css" />
+		<script type="text/javascript" src="http://www.duola.vip/js/jsutil.js"></script>
 
 		<script type="text/javascript" src="http://www.duola.vip/js/index.js"></script>
 		<script type="text/javascript" src="http://www.duola.vip/js/timeDeal.js"></script>
-		<script type="text/javascript" src="http://www.duola.vip/js/jsutil.js"></script>
 		<script type="text/javascript" src="js/animationData.js"></script>
 
 		<link rel="Shortcut Icon" href="http://img.duola.vip/image/logo/dlam.jpg" />
@@ -50,62 +50,66 @@
 						</a>
 					</div>
 				</div>
+				<ul class="w_top main_top">
+					<li><p class="w_topp">支出{{monOutNum}}笔</p><p>{{monOut}}</p></li>
+					<li><p class="w_topp">收入{{monInNum}}笔</p><p class="w_red">+{{monIn}}</p></li>
+					<li><p class="w_topp">结余</p><p class="w_yellow">{{monRest}}</p></li>
+				</ul>
 			</header>
-			<ul class="w_top main_top">
-				<li><p class="w_topp">支出{{monOutNum}}笔</p><p>{{monOut}}</p></li>
-				<li><p class="w_topp">收入{{monInNum}}笔</p><p class="w_red">+{{monIn}}</p></li>
-				<li><p class="w_topp">结余</p><p class="w_yellow">{{monRest}}</p></li>
-			</ul>
+			
 			<!-- <div class="main_top" style="display: none;">
 				<span style="margin-left:30px;">支出：<span style="color:red">{{monOut}}</span></span>&emsp;
 				<span style="margin-left:30px;">收入：<span style="color:green">{{monIn}}</span></span>&emsp;
 				<span style="margin-left:30px;">结余：<span style="color:orange">{{monRest}}</span></span>&emsp;
 			</div> -->
 			
-			<!-- 结束 -->
-			<van-pull-refresh v-model="isLoading"  success-text="刷新成功" @refresh="onRefresh">
-				<van-list v-model="loading" :finished="finished" @load="onLoad" offset="10">
-					<div v-if="contentData.length==0" style="margin-top:88px;">
-						<center>这个月还没有账单喔，快<a href="accNew.html">点我</a>去记一笔吧</center>
-					</div>
-					<van-cell class="w_cell" v-for="(mainData,index) in contentData" />
-					<div v-if="index>0">
-						<div class="w_date" v-if="mainData.day!=contentData[index-1].day" style="height:20px;background:#f8f8f8;width:93%">
-							<span>{{mainData.day}}</span>
-							<span class="right"  style="margin-right:5px;">
-								<span v-if="mainData.dayOut>0" style="font-size: 12px;color: #737373;">支出:<span class="w_red">{{mainData.dayOut}}</span>元</span>
-								<span v-if="mainData.dayOut>0&&mainData.dayIn>0">|</span>
-								<span v-if="mainData.dayIn>0" style="font-size: 12px;color: #737373;">收入:<span class="w_yellow">{{mainData.dayIn}}</span>元</span>
-							</span>
+			<div style="margin-top:120px">
+				<van-pull-refresh v-model="isLoading"  success-text="刷新成功" @refresh="onRefresh">
+					<van-list v-model="loading" :finished="finished" @load="onLoad" offset="10">
+						<div v-if="contentData.length==0" style="margin-top:88px;">
+							<center>这个月还没有账单喔，快<a href="accNew.html">点我</a>去记一笔吧</center>
 						</div>
-					</div>
-					<div v-if="index<1">
-						<div class="w_date" style="height:20px;background:#f8f8f8;width:93%">
-							<span>{{mainData.day}}</span>
-							<span class="right"  style="margin-right:5px;">
-								<span v-if="mainData.dayOut>0" style="font-size: 12px;color: #737373;">支出:<span class="w_red">{{mainData.dayOut}}</span>元</span>
-								<span v-if="mainData.dayOut>0&&mainData.dayIn>0">|</span>
-								<span v-if="mainData.dayIn>0" style="font-size: 12px;color: #737373;">收入:<span class="w_yellow">{{mainData.dayIn}}</span>元</span>
-							</span>
-						</div>
-					</div>
-					<div class="flex add002 w_border" style="">
-						<div class="flex_left">
-							<!--<img src='http://v.duola.vip/duola/images/head.jpg' style='width:30px;height:30px;'><span style="bottom:12px;">{{mainData.cate.substring(0,1)}}</span>-->
-							<span style="bottom:12px;">{{mainData.cate}}</span> 
-							<!--<img avatar="LongBros" style='width:30px;height:30px;border-radius: 50%'>-->
-						</div>
-						<div class="flex_right">
-							<div class="list_top">
-								<p><span style="font-size: 12px;color: #737373;">{{mainData.time}}</span>&emsp;{{mainData.remark}}
-									<span class="right">￥{{mainData.amount}}</span>
-								</p>
-								<!--<span style="font-size: 12px;color: #737373;">用户：{{ mainData.userId }}</span>&emsp; -->
+						<van-cell class="w_cell" v-for="(mainData,index) in contentData" />
+						<div v-if="index>0">
+							<div class="w_date" v-if="mainData.day!=contentData[index-1].day" style="height:20px;background:#f8f8f8;width:93%">
+								<span>{{mainData.day}}</span>
+								<span class="right"  style="margin-right:5px;">
+									<span v-if="mainData.dayOut>0" style="font-size: 12px;color: #737373;">支出:<span class="w_red">{{mainData.dayOut}}</span>元</span>
+									<span v-if="mainData.dayOut>0&&mainData.dayIn>0">|</span>
+									<span v-if="mainData.dayIn>0" style="font-size: 12px;color: #737373;">收入:<span class="w_yellow">{{mainData.dayIn}}</span>元</span>
+								</span>
 							</div>
 						</div>
-					</div>
-				</van-list>
-			</van-pull-refresh>
+						<div v-if="index<1">
+							<div class="w_date" style="height:20px;background:#f8f8f8;width:93%">
+								<span>{{mainData.day}}</span>
+								<span class="right"  style="margin-right:5px;">
+									<span v-if="mainData.dayOut>0" style="font-size: 12px;color: #737373;">支出:<span class="w_red">{{mainData.dayOut}}</span>元</span>
+									<span v-if="mainData.dayOut>0&&mainData.dayIn>0">|</span>
+									<span v-if="mainData.dayIn>0" style="font-size: 12px;color: #737373;">收入:<span class="w_yellow">{{mainData.dayIn}}</span>元</span>
+								</span>
+							</div>
+						</div>
+						<div class="flex add002 w_border" :id="'acc'+index" style="">
+							<div class="flex_left">
+								<!--<img src='http://v.duola.vip/images/head.jpg' style='width:30px;height:30px;'><span style="bottom:12px;">{{mainData.cate.substring(0,1)}}</span>-->
+								<span style="bottom:12px;">{{mainData.cate}}</span> 
+								<!--<img avatar="LongBros" style='width:30px;height:30px;border-radius: 50%'>-->
+							</div>
+							<div class="flex_right">
+								<div class="list_top">
+									<p><span style="font-size: 12px;color: #737373;">{{mainData.time}}</span>
+									<span style="margin-left:11px;" @click="showAllRemark(mainData.remark)">{{mainData.remarkPart}}</span>
+										<span @click="editAcc(mainData.id)" class="right">￥{{mainData.amount}}</span>
+										<span style="margin-left:16px;" @click="yulanImg(index,mainData.picture)"><van-icon :info="mainData.picNum"/></span>
+									</p>
+								</div>
+							</div>
+						</div>
+					</van-list>
+				</van-pull-refresh>
+			</div>
+			
 			<van-popup v-model="show" position="bottom">
 				<van-datetime-picker v-model="currentDate" type="year-month" visible-item-count="4" :show-toolbar=true :formatter="formatter" :min-date="minDate"
 				:max-date="maxDate"
@@ -136,7 +140,7 @@
 					vant.Toast("请登录后使用更多功能")
 				}
 				var body = document.getElementById("bodys");
-				body.style.background = "url(http://m.duola.vip/res/images/back/back11.png)";
+				body.style.background = "url(http://img.duola.vip/res/images/back/back11.png)";
 			}
 			
 			var dayMed='0000-00-00';//求日收入、支出的中间值
@@ -172,7 +176,7 @@
 				created: function() {
 					if(!user){//2020-04-19 
 						vant.Toast('请先登录后方可查看账单');
-						setTimeout(function(){ window.location="http://www.duola.vip/duola/register.html"; }, 2000);
+						setTimeout(function(){ window.location="http://m.duola.vip/register.html"; }, 2000);
 						return;
 					}
 					let year = new Date().getFullYear();
@@ -184,7 +188,6 @@
 					
 					let t = year + '-' + month;
 					this.chooseMon = t;
-					
 
 					axios.get('http://m.duola.vip/queryBillsBy.do?userId='+user+'&month='+t)
 					.then(function(response) {
@@ -203,19 +206,36 @@
 								app.monOutNum++;
 								tempData[i].amount = -tempData[i].amount;
 								app.monOut = app.monOut + tempData[i].amount;
-								
 							} else {
 								app.monInNum++;
 								app.monIn = app.monIn + tempData[i].amount;
 							}
 							
-							if (tempData[i].remark == "")
+							if (tempData[i].remark == ""){
+								tempData[i].remarkPart = tempData[i].cate;
 								tempData[i].remark = tempData[i].cate;
+							}
+							if ((tempData[i].remark+"").length>12)
+								tempData[i].remarkPart=(tempData[i].remark+"").substring(0,10)+'...';
+							else
+								tempData[i].remarkPart=tempData[i].remark;
+							
+							var pic=tempData[i].picture+"";
+							var pics=new Array();
+							pics=pic.split("【");
+							if(pics.length>1){
+								tempData[i].picNum=pics.length-1;
+								tempData[i].picture=pics.splice(1);
+							}else{
+								tempData[i].picNum='';
+							}
+							//console.log(pic+'->'+tempData[i].picNum)
 						}
+						
 						app.monOut = parseDouble(app.monOut)
 						app.monIn = parseDouble(app.monIn)
 						app.monRest = parseDouble(app.monIn - (-app.monOut))
-						console.log(tempData);
+						//console.log(tempData);
 						var reg = /<[^<>]+>/g;
 
 						app.contentData.push(...tempData);
@@ -272,7 +292,7 @@
 					chooseTime: function() {
 						//if(!user){//2020-04-19 
 						//	vant.Toast('请先登录后方可查看各月账单');
-						//	setTimeout(function(){ window.location="http://m.duola.vip/duola/register.html"; }, 2000);
+						//	setTimeout(function(){ window.location="http://m.duola.vip/register.html"; }, 2000);
 						//	return;
 						//}
 						app.show = true;
@@ -292,8 +312,24 @@
 							return `${value}秒`
 						}
 						return value
-					},
-					changeMon: function(val) {
+					},editAcc(id){
+						var c=confirm('编辑这条账单？')
+						if(c==true){
+							window.open('accNew.html?id='+id,'_blank')	
+						}
+					},yulanImg:function(index,images){
+						let img=[];
+						vant.Toast("预览图片");
+						for(var i=0;i<images.length;i++){//2020-04-05添加水印
+							var pic=images[i].substring(images[i].indexOf("acc")+4);
+							img.push("http://www.duola.vip/note/diary/markImage.do?type=acc&imgurl="+pic);
+						}
+						//img=images;
+						//console.log(img);
+						vant.ImagePreview(img)
+					},showAllRemark(remark){
+						vant.Toast(remark);
+					},changeMon: function(val) {
 						let year = val.getFullYear()
 						let month = addZero(val.getMonth() + 1)
 						let day = val.getDate()
@@ -354,8 +390,27 @@
 										//}
 									}
 									console.log(dayRest)
-									if (tempData[i].remark == "")
+									
+									if (tempData[i].remark == ""){
+										tempData[i].remarkPart = tempData[i].cate;
 										tempData[i].remark = tempData[i].cate;
+									}
+									if ((tempData[i].remark+"").length>12)
+										tempData[i].remarkPart=(tempData[i].remark+"").substring(0,10)+'...';
+									else
+										tempData[i].remarkPart=tempData[i].remark;
+									
+									var pic=tempData[i].picture+"";
+									var pics=new Array();
+									pics=pic.split("【");
+									if(pics.length>1){
+										tempData[i].picNum=pics.length-1;
+										tempData[i].picture=pics.splice(1);
+									}else{
+										tempData[i].picNum='';
+									}
+									console.log(pic+'->'+tempData[i].picNum)
+									
 								}
 								app.monOut = parseDouble(app.monOut)
 								app.monIn = parseDouble(app.monIn)
@@ -466,6 +521,35 @@
 				var index = Math.floor(Math.random() * textArray.length);
 				return textArray[index]
 			}
+			
+			function load (){
+		 		/*单指拖动*/
+			var obj = document.getElementById('acc1');
+			obj.addEventListener("touchstart", function(event) {
+				var touch = event.targetTouches[0];
+				var left = parseInt(obj.style.left);
+				// alert(left);
+				var x = touch.pageX - 0;
+				var y = touch.pageY - 0;
+				obj.addEventListener('touchmove', function(event) {
+					// 如果这个元素的位置内只有一个手指的话
+					if (event.targetTouches.length == 1) {　　　　
+						event.preventDefault(); // 阻止浏览器默认事件，重要 
+						var touch = event.targetTouches[0];
+						// 把元素放在手指所在的位置
+		 				vant.Toast(touch.pageX)
+						obj.style.marginLeft = touch.pageX - x + 'px';
+						// obj.style.top = touch.pageY + 'px';
+					}
+				}, false);
+		 
+			});
+			obj.addEventListener("touchend",function(){
+				obj.removeEventListener("touchstart");
+				obj.removeEventListener("touchmove");
+			});   
+		}
+		//window.addEventListener('load',load, false);
 		</script>
 	</body>
 </html>

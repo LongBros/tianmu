@@ -1,16 +1,10 @@
 package com.longbro.doranote.job;
 
-import java.sql.Array;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 import org.apache.commons.lang.StringUtils;
@@ -72,7 +66,7 @@ public class DoraTimerJob {
 			int cake=new Random().nextInt(Strings.cakes.length);
 			con+="生日快乐！Best Wishes To you.<<hahaxiao:::&&&&jiyan:::&&&&keai:::</center><center><img style='width:400px;height:400px;' src='http://img.duola.vip/image/cake/"+Strings.cakes[cake]+"'></center>";
 			NoteBook nb=new NoteBook();
-			nb.setNWritter("1314521");nb.setNBookid(82927524);nb.setNAuthority(0);nb.setNAllowComment(0);
+			nb.setNWritter("28596763");nb.setNBookid(82927524);nb.setNAuthority(0);nb.setNAllowComment(0);
 			nb.setNTitle("祝"+today+"生日的小伙伴Happy Birthday！");nb.setNContent(con);nb.setnTop(13);nb.setnUserTop(0);
 			nb.setNWeather(0);nb.setNMood(0);nb.setnWriteDevice("generate");
 			nb.setNTime(TimeUtil.time());nb.setnSongId("5270588");nb.setNType(0);nb.setNLocation("哆啦世界");

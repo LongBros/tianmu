@@ -45,7 +45,16 @@ function loadDiary(from,author,page,perPage,userId){
 			user:userId
 		},
 		success:function(data){
-			$("#diarys").append("<hr width='100%'>");
+			var isFirst="";
+			var vs=new Array("chongqingwenlvcheng1.mp4",
+					"mv_756_nibushizhenzhengdekuaile.mp4","mv_132_xiaoxingyun.mp4","mv_1037_yunyanchengyu.mp4");
+			var which=random(0, vs.length-1);
+			console.log("第"+which+"个视频")
+			var v=vs[which];
+			//if(i==0&&page==1){//第一个后面加视频
+				isFirst="<video width='835px' height='300px' controls='controls' autoplay src='http://img.duola.vip/v/"+v+"'></video>";
+			//}
+			$("#diarys").append(isFirst+"<hr width='100%'>");
 			for(var i=0;i<data.length;i++){
 				//处理内容和标题
 				var title=data[i].ntitle+"";
@@ -137,8 +146,16 @@ function loadDiary(from,author,page,perPage,userId){
 				}else{
 					color="red";
 				}
+				var classAll="diary";
+				if(data[i].nTop>1){//站长置顶
+					classAll="diary top";
+				}
+				
+//				if(i==data.length-1&&page==1){//最后一个后面加视频
+//					isFirst="<video width='835px' height='300px' controls='controls' src='http://img.duola.vip/v/82_2020-10-20.mp4'></video>";
+//				}
 				//onclick='openOther(0,"+data[i].nid+")'	href=\"diary.html?"+data[i].nid+"\"
-				$("#diarys").append("<div class=\"diary\">"+tx+"<a  onclick='openOther(0,"+data[i].nid+","+data[i].nauthority+")' "+ti+">"+con+"</a><br>"
+				$("#diarys").append("<div class=\""+classAll+"\">"+tx+"<a  onclick='openOther(0,"+data[i].nid+","+data[i].nauthority+")' "+ti+">"+con+"</a><br>"
 				+"<div class='info'>"+au+"<i class=\"Hui-iconfont\">&#xe690;</i>"+data[i].ntime
 				+"&emsp;<i class=\"Hui-iconfont\">&#xe681;</i>"+cate+"&nbsp;:<span title='"+data[i].ntitle+"'>"+title+"</span>&nbsp;<span>"+(music=='1'?'<font color=\'red\' title=\'有音频喔，点此加入播放列表\'>'+wordSize+'<img onclick=\''+fun+'\'  style="width: 16px;height: 16px" src="http://img.duola.vip/image/playing1.gif"\'></font>':'<font color=\'red\'>'+wordSize+'</font>')+"</span>&emsp;<i class=\"Hui-iconfont\">&#xe6c9;</i><span title='"+data[i].nlocation+"'>"+loc
 				+"</span><div class='zan'><i class=\"Hui-iconfont\">&#xe725;</i>"+data[i].visitNum+com
@@ -146,8 +163,8 @@ function loadDiary(from,author,page,perPage,userId){
 				+"&nbsp;<i class=\"Hui-iconfont\" style=\"color:"+color+"\"  onclick='praiseDiary("+data[i].nid+","+data[i].nwritter+","+i+")'  id=\"diary"+i+"\">&#xe66d;</i><span id=\"praiseNum"+i+"\" >"+data[i].praiseNum
 				
 				+"</span>&nbsp;<i class=\"Hui-iconfont\">&#xe630;</i><span>"+data[i].storeNum
-				+"</span>"+nsh+top+"</div></div>"
-				+"</div><hr width='100%'>");//740px
+				+"</span>"+nsh+top+"</div></div></div>"
+				+"<hr width='100%'>");//740px
 			}
 		}
 	});
@@ -765,6 +782,54 @@ function playAllAudio(){
 		}
 	}
 	console.log("end->音频批量添加成功，歌曲："+successSongNum+"，音频："+successAudioNum)
+}
+//var isShow=0; onclick="showorhideqr()"
+function showorhideqr(isShow) {
+	if(isShow==0){
+		$(".dora_qr").show();
+		isShow=1;
+	}else{
+		$(".dora_qr").hide();
+		isShow=0;
+	}
+}
+function openPlayer(){
+	var showPlayer=getCookie("showPlayer")+"";//播放页面是否已显示
+	console.log("播放器显示状态(0未显示，1已显示):"+showPlayer)
+	if(showPlayer=="1"){
+		
+	}else{
+		setCookie("showPlayer","1");
+		window.open("player.html", "_blank")
+	}
+}
+//2020-12-13
+function changeTip(){
+	var se=new Array();
+	se[0]="哆啦网播放器中点击歌手可直达搜索其歌曲";
+	se[1]="大家好，我是小喇叭，欢迎您访问本站。";
+	se[2]="哆啦网全站音频都会流入哆啦网播放器";
+	se[3]="登录后可添加更多音频至哆啦网播放器中";
+	se[4]="我的家园页设置生日，哆啦网当天送去祝福";
+	se[5]="你可以点赞、收藏、评论你喜欢的文章";
+	se[6]="你可以关注你欣赏的作者，向他倾诉";
+	se[7]="在我的家园页可以选择你喜欢的背景";
+	se[8]="“音频设置”支持你更改自己的家歌";
+	se[9]="你可以在我的家园页私密你的信息";
+	se[10]="来哆啦网播放器，听最新、最热的歌曲";
+	se[11]="哆啦网，用文本、音频记录美好生活";
+	se[12]="哆啦网QQ交流群：415086137，期待你的添加";
+	se[13]="首页右下角第一个悬浮按钮可唤起播放器";
+	se[14]="首页右下角第二个悬浮按钮可关注公众号";
+	se[15]="哆啦网期待你的注册与使用";
+	//随机生成0~sen.length-1内的整数
+	var i=Math.round(Math.random()*(se.length-1-0)+0);//使用Math.round来取整
+	//alert(se.length-1);
+	document.getElementById("word").innerHTML=se[i];
+	//如何实现逐个循环显示，而不是随机显示？
+	//var i=0;
+	//document.getElementById("word").innerHTML=se[i];
+	//i++;
 }
 /**
 **

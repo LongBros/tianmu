@@ -174,14 +174,17 @@ function loadAuthorInfo(page){
 			if(sexInt==0){//sexInt在index.js中指定
 				call="她";//在author.js中使用
 			}
+			var songInfo=data.homeSongName+""
+			songName=songInfo.substring(songInfo.indexOf("-")+1)
+			homeSongId=songInfo.substring(0, songInfo.indexOf("-"))
+
 			if(user!=author){//不是当前人时候的title显示
 				document.title=""+document.title+"'"+data.uuserName+"'的日记~哆啦网";
+
 				if(url.indexOf("author.html")!=-1){//别的作者的页面
 //					var sid=data.uhomeSong;//家歌
 //					homeSongId=sid;
-					var songInfo=data.homeSongName+""
-					songName=songInfo.substring(songInfo.indexOf("-")+1)
-					homeSongId=songInfo.substring(0, songInfo.indexOf("-"))
+					
 					ifAutoPlay(homeSongId);
 				}
 			}else{//当前人
@@ -189,15 +192,11 @@ function loadAuthorInfo(page){
 					document.title=document.title+"朕的日记~哆啦网";
 				}else if(url.indexOf("author")!=-1){//我的作者页
 					document.title="朕的日记~哆啦网";
-					var songInfo=data.homeSongName+""
-					songName=songInfo.substring(songInfo.indexOf("-")+1)
-					homeSongId=songInfo.substring(0, songInfo.indexOf("-"))
+					
 					ifAutoPlay(homeSongId);
 				}else if(url.indexOf("myHome")!=-1){//我的家园页
 					document.title="我的家园~哆啦网";
-					var songInfo=data.homeSongName+""
-					songName=songInfo.substring(songInfo.indexOf("-")+1)
-					homeSongId=songInfo.substring(0, songInfo.indexOf("-"))
+					
 					ifAutoPlay(homeSongId);
 				}
 			}
@@ -434,25 +433,7 @@ function getSetting(userId){
 		}
 	});
 }
-//15.检测访问设备
-//平台、设备和操作系统
-function monitor(){
-	//平台、设备和操作系统
-	var system ={win : false,mac : false,xll : false};
-	//检测平台
-	var p = navigator.platform;
-	system.win = p.indexOf("Win") == 0;
-	system.mac = p.indexOf("Mac") == 0;
-	system.x11 = (p == "X11") || (p.indexOf("Linux") == 0);
-	//跳转语句，如果是手机访问就自动跳转到wap.baidu.com页面
-	if(!system.win && !system.mac && !system.xll){
-	    $(".rights").text("");
-	    document.getElementById("rights").style.display="none";
-	    document.getElementById("contents").style.marginLeft="10px";
-	    document.getElementById("contents").style.width="400px";
-	    document.getElementById("diary").style.width="320px";
-	}
-}
+
 //16.播放与暂停自己或别人的家歌
 function playHomeSong(){
 	var btn=document.getElementById("playBtn");
@@ -642,13 +623,13 @@ function chooseSong(sid,name){
 /**
 *22.清空所选歌曲~jQuery与纯js
 */
-$(function(){
-	$("#clearBtn").click(function(){
-		$("#sourceId").val("");
-		$("#songName").val("");
-		$("#clearBtn").css("display","none");
-	});
-})
+//$(function(){
+//	$("#clearBtn").click(function(){
+//		$("#sourceId").val("");
+//		$("#songName").val("");
+//		$("#clearBtn").css("display","none");
+//	});
+//})
 //纯js写法	需在HTML中加上onClick="clearSong();" 
 /*function clearSong(){
 	document.getElementById("sourceId").value="";

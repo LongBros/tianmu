@@ -219,7 +219,7 @@ public class AddressUtils {
         //ip21=61.158.149.35;郑州
         String address = "";  
         try {  
-            address = AddressUtils.getAddresses("ip="+ip, "utf-8");  
+            address = getAddresses("ip="+ip, "utf-8");  
         } catch (UnsupportedEncodingException e) {  
             // TODO Auto-generated catch block  
             address="0"; 
@@ -252,6 +252,6 @@ public class AddressUtils {
 
     }
     public static void main(String[] args) {
-		String add=getAddByIp("61.158.149.35");
+		String add=getAddByIp("120.229.120.73");
 	}
 }  

@@ -47,7 +47,15 @@
   	<url-pattern>/*</url-pattern>
   </filter-mapping>
   
-  
+  <!-- 记录访问日志（2021-01-09由Interceptor实现改为用filter实现）======== -->
+  <filter>
+  	<filter-name>request</filter-name>
+  	<filter-class>com.longbro.doranote.filter.RequestFilter</filter-class>
+  </filter>
+  <filter-mapping>
+  	<filter-name>request</filter-name>
+  	<url-pattern>/*</url-pattern>
+  </filter-mapping>
   
   <servlet>
     <servlet-name>WechatServlet</servlet-name>

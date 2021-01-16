@@ -91,12 +91,15 @@ public class SpideNetEase {
 					System.out.println(">>>>>>>>>>>>>>>"+map.get("name")+"----fee"+map.get("fee"));
 				}
 				HashMap<String, String> song=new HashMap<>();
-				System.out.println(map.get("name"));
 				song.put("sourceId", idMap.get(map.get("name"))+"");
-				
 				song.put("songName", map.get("name")+"");
+				if("0.0".equals(map.get("mvid")+""))//2021-01-04添加爬取mvid
+					song.put("mv_path","" );
+				else
+					song.put("mv_path","https://music.163.com/#/mv?id="+(long)Double.parseDouble(map.get("mvid")+"")+"" );
 				song.put("duration", map.get("duration")+"");
-				
+				System.out.println("歌名："+map.get("name")+",mv地址:"+song.get("mv_path"));
+
 				String album=map.get("album")+"";
 				
 //				HashMap albums=new Gson().fromJson(album, HashMap.class);

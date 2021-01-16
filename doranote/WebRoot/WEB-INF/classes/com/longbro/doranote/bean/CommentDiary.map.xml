@@ -29,7 +29,7 @@
 		FROM d_comment dc
 		LEFT JOIN d_user_info dui on dc.c_Reviewer=dui.u_User_Id
 		WHERE 
-		dc.c_Reviewed_Diary=#{id} order by dc.c_Review_Time desc;
+		dc.c_Reviewed_Diary=#{id} and dc.c_Read_Status!=2 order by dc.c_Review_Time desc;
 	</select>
 	
 	<select id="query" parameterType="java.util.Map" resultMap="CommentDiary">
@@ -89,7 +89,7 @@
 		from d_comment dc
 		LEFT JOIN d_user_info dui ON dc.c_Reviewer=dui.u_User_Id
 		LEFT JOIN d_diary dd ON dc.c_Reviewed_Diary=dd.n_Id
-	    WHERE dc.c_Reviewed=#{userId}
+	    WHERE dc.c_Reviewed=#{userId} and dc.c_Read_Status!=2
 	    order by dc.c_Review_Time desc
 	    ;
 	</select>
@@ -101,7 +101,7 @@
 		from d_comment dc
 		LEFT JOIN d_user_info dui ON dc.c_Reviewed=dui.u_User_Id
 		LEFT JOIN d_diary dd ON dc.c_Reviewed_Diary=dd.n_Id
-	    WHERE dc.c_Reviewer=#{userId}
+	    WHERE dc.c_Reviewer=#{userId} and dc.c_Read_Status!=2
 	    order by dc.c_Review_Time desc
  		;
 	</select>

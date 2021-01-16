@@ -174,7 +174,8 @@
 		</div>
 		<div style="background:#5fb878;height: 1px;"></div>
 		<div class="website" style="margin-top: 10px;">
-			<img style='width: 16px;height: 16px' src='http://img.duola.vip/image/trumpet.png'/><span style="margin-left: 13px">哆啦网(Doranote)，记录你生活的点点滴滴！</span><br>
+			<img style='width: 16px;height: 16px' src='http://img.duola.vip/image/trumpet.png'/>
+			<span id="word" style="margin-left: 13px">哆啦网(Doranote)，记录你生活的点点滴滴！</span><br>
 		</div>
 		<!-- <div class="statistic">
 			&emsp;哆啦统计<br>在线人数：8888<br>用户数：888888<br>
@@ -200,15 +201,22 @@
 				<a href="http://m.duola.vip/amaze/songsList.jsp" target="_blank">553Music</a>&emsp;<br>
 				<a href="http://www.gold404.cn/" target="_blank">K先生的博客</a>&emsp;
 				<a href="https://www.autopiano.cn/" target="_blank">自由钢琴</a>&emsp;
-				<a href="http://www.17419.vip/" target="_blank">17419</a>&emsp;
-				<!--<a href="http://blog.duola.vip/msgboard.jsp" target="_blank">每日一句</a>&emsp;
+				<a href="https://airirui.top/" target="_blank">没名字的小站</a>&emsp;
+				<!--<a href="http://www.17419.vip/" target="_blank">17419</a>&emsp;
+				<a href="http://blog.duola.vip/msgboard.jsp" target="_blank">每日一句</a>&emsp;
  				<br><center><a href="http://www.beian.miit.gov.cn/" target="_blank">豫ICP备19043404号</a></center>
  -->
 			</div>
 		</div>
 		<audio id="audio" src="" autoplay="autoplay" controls="controls" style="float: left;margin-left: 20px;margin-top: 10px;display:none"></audio>
 	</div>
+	<div class="dora_qr">
+		<img id="dora_qr_pic" src="http://img.duola.vip/image/useful/wechat_qrcode.jpg">
+		<span>关注微信公众号</span>
+	</div>
 	<div class="toTop">
+		<img title="唤起播放器" id="callPlayer" style="width:18px;height:18px" onclick="openPlayer()" src="http://img.duola.vip/image/useful/kefu.png">&emsp;
+		<img title="关注公众号" alt="关注公众号" style="width:18px;height:18px" onmouseout="showorhideqr(1)" onmouseover="showorhideqr(0)" src="http://img.duola.vip/image/useful/qr.png">&emsp;
 		<a href="#" title="点我回顶部喔">^^</a>
 	</div>
 	<div id="warmtip" style="display:none;width: 340px;height: 160px;color:white;background: #1e1e1e;margin-left:530px;margin-top:300px;
@@ -221,8 +229,7 @@
 			<li onclick="neverTip()" style="color:orange;font-size: 10px;margin-left: 140px;margin-top: 1px;">不再弹出</li>
 		</ul>
 	</div>
-	<div id="sponsorImage" style="display:none;background:#009688;width:200px;bottom:50px;height:240px;position:fixed;cursor: pointer;">
-		
+	<div id="sponsorImage">
 		<img id="paypal" alt="" style="margin-left: 20px;display:inline-block" src="http://img.duola.vip/image/picture/paypal.jpg" width="160px" height="219px">
     	<img id="wechat" alt="" style="margin-left: 20px;display: none" src="http://img.duola.vip/image/picture/wechat.jpg" width="160px" height="219px">
     	<img id="qq" alt="" style="margin-left: 20px;display: none" src="http://img.duola.vip/image/picture/qq.jpg" width="160px" height="219px">
@@ -239,7 +246,7 @@
 			<span onclick="tabOnItem('1')">用户使用指南</span>&nbsp;<img alt="" style="width: 18px;height: 18px;" src="http://img.duola.vip/image/picture/hot1.gif">&nbsp;|&emsp;
 			<span onclick="tabOnItem('3')" title="给作者留下你的珍贵性建议">留言作者</span>&emsp;
 		</div>
-		<span style="margin-right:50px;padding-top:3px;font-size: 15px;float: right;"><a href="http://www.duola.vip" style="text-decoration: none">www.duola.vip</a> © 2018~2020	&emsp;|&emsp;<a href="http://www.duola.vip" style="text-decoration: none">豫ICP备19043404号-1</a>&emsp;<span title="点击关闭" style="margin-left:40px;color:red" onclick="closeBottom()">X</span></span>
+		<span style="margin-right:50px;padding-top:3px;font-size: 15px;float: right;"><a href="http://www.duola.vip" style="text-decoration: none">www.duola.vip</a> © 2018~2020	&emsp;|&emsp;<a href="https://beian.miit.gov.cn"  target="_blank" style="text-decoration: none">豫ICP备19043404号-1</a>&emsp;<span title="点击关闭" style="margin-left:40px;color:red" onclick="closeBottom()">X</span></span>
 	</div>
 	<!--_footer 作为公共模版分离出去-->
 	<script type="text/javascript" src="hui/lib/jquery/1.9.1/jquery.min.js"></script> 
@@ -274,7 +281,7 @@
 			if(perPageNum!="0"){
 				perPage=perPageNum;
 			}
-			monitor();//手机访问时隐藏左边栏目
+			monitor();
 			loadAllUser();//首页加载推荐用户
 			switchTab(-1);
 
@@ -287,7 +294,7 @@
 			var closeThread=window.setInterval(closeTip,10000)
 			var countDownThread=window.setInterval(autoCloseTip,1000)
 		}
-		
+		window.setInterval("changeTip();", 5000);
 	</script>
 </body>
 </html>

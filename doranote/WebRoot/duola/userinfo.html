@@ -7,7 +7,9 @@
 	<!-- 引入样式文件 -->
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vant@2.4/lib/index.css">
 	<link rel="stylesheet" type="text/css" href="css/base.css"/>
+	<script type="text/javascript" src="http://www.duola.vip/js/timeDeal.js"></script>
 	<script type="text/javascript" src="http://www.duola.vip/js/jsutil.js"></script>
+	<script type="text/javascript" src="http://www.duola.vip/hui/diary/js/jquery.js"></script>
 	<script type="text/javascript" src="http://www.duola.vip/js/index.js"></script>
 </head>
 <body>
@@ -63,7 +65,7 @@
 				<span style="color: #666;" class="van-field__control">{{uuserId}}</span>
 			</p>
 		</li>
-		<li>
+		<li @click="openDate()">
 			<span class="list_text txt00" style="margin-right: 25px">生日</span>
 			<p style="">
 				<span style="color: #666;" class="van-field__control">{{birthday}}</span>
@@ -103,9 +105,6 @@
 				<span class="list_text txt00">家歌</span>
 				<span style="margin-left: 25px">{{homeSongName}}</span>
 			</div>
-			<!--<p style="" @click="alertMenu(3)">
-				<img class="jiantou" src="http://m.lianzhigou.cn/public/images/smallArrow.png" >
-			</p>-->
 			<span style="color:green;margin-left:15px;margin-top:4px;font-size:12px;" @click="openSearBox()">搜搜</span>
 		</li>
 		<li @click="alertMenu(1)">
@@ -171,10 +170,18 @@
 				<img class="jiantou" src="http://m.lianzhigou.cn/public/images/smallArrow.png" >
 			</p>
 		</li>
+		
+		<van-popup v-model="showDate" position="top">
+			<van-datetime-picker
+			  v-model="currentDate"
+			  type="date"
+			  :min-date="minDate"
+			  :max-date="maxDate"
+			  @confirm="chooseBir" @cancel="cancel"
+			/>
+		</van-popup>
 			<!-- <van-button type="primary" @click="alertMenu">弹出菜单</van-button> -->
 			<van-action-sheet v-model="show" close-on-click-action :description="whichPage" :actions="actions" bind:close="onClose" @select="onSelect"/>
-			
-			
 	</ul>
 </div>
 <div style="text-align:center"><audio id="audio" src="" autoplay="autoplay" controls="controls"  style="float: left;margin-left: 20px;margin-top: 10px;display:none"></audio></div>
@@ -193,7 +200,6 @@
 	var app=new Vue({
 		el:'#app',
 		data:{
-			// user_id:65,
 			value:'',
 			show: false,
 			headImage:'',
@@ -223,8 +229,10 @@
 			searchBox:false,//搜索框的显示与否
 			searchTitle:'',
 			goodTip:'输入歌名、歌手或歌词',
-			showDate:false//是否显示日期选择器
-		
+			showDate:false,
+			minDate:new Date(1980,10,1),
+			maxDate:new Date(),
+			currentDate:new Date()
 		},
 		created:function(){
 			console.log('开始请求数据');
@@ -291,12 +299,24 @@
 				console.log(event.name);
 
 				this.updateInfo(type);
-			},chooseBir(){
-				//vant.Toast("...");
-				//app.showDate=true;
-			
+			},openDate:function(){
+				if(app.birthday){//2021-01-09移动端暂支持随意修改生日
+					vant.Toast("生日设置后不允许修改")
+					//return;
+				}
+				app.showDate=true;
+			},cancel() {
+				app.showDate = false;
+			},chooseBir: function(val) {
+				let year = val.getFullYear()
+				let month = addZero(val.getMonth() + 1)
+				let day = addZero(val.getDate())
+				let t = year + '-' + month+'-'+day;
+				app.birthday = t;
+				this.updateInfo(10);
+				app.showDate = false;
 			},historyHeadImg(){//查看历史头像
-				vant.Toast("暂时还不支持呢");
+				//vant.Toast("暂时还不支持呢");
 				let img=[];
 				axios.get('http://www.duola.vip/note/userinfo/listAllHeadImg.do?userId='+author+'&page=0')
 				.then(function (response) {
@@ -309,8 +329,6 @@
 				.catch(function (error) {
 					console.log(error);
 				})	
-				
-				//console.log(img);
 				vant.ImagePreview(img)
 			},openSearBox(){
 				var index = Math.floor(Math.random()*100);
@@ -335,7 +353,6 @@
 				.catch(function (error) {
 					console.log(error);
 				})
-				
 			},search(){
 				let key=app.key;
 				if(key==""){
@@ -365,8 +382,6 @@
 						app.songs=response.data.result;
 						app.searchTitle="共搜索到"+response.data.num+"首歌曲";
 					}
-					
-					
 				})
 				.catch(function (error) {
 					console.log(error);
@@ -388,7 +403,6 @@
 					}
 					sid=app.audio;
 				}
-				
 				var url="";
 				if(sid.substring(sid.length-5)==".html"){
 					url="http://link.hhtjim.com/qq/"+sid.substring(0, sid.length-5)+".mp3";
@@ -428,7 +442,6 @@
 						for(var i=0;i<data.length;i++){
 							data[i].name=data[i].songName+"-"+data[i].singer;
 						}
-						//vant.Toast(data[0].songName);
 						app.actions=data;
 						app.whichPage="已为你加载出第"+page+"页的歌曲，看看有没有喜欢哒";
 					})
@@ -470,8 +483,6 @@
 					app.actions=[{id:0,name:"显示下拉列表",type:"单页加载日记篇数"},{id:1,name:"10篇",type:"单页加载日记篇数"},{id:2,name:"20篇",type:"单页加载日记篇数"},{id:3,name:"30篇",type:"单页加载日记篇数"},{id:4,name:"40篇",type:"单页加载日记篇数"},{id:5,name:"50篇",type:"单页加载日记篇数"}];
 				}
 				app.show = true;
-				//console.log("event:"+event);
-    			//console.log("event.detail:"+event.detail);
   			},onSelect:function(item){
 				var ac=app.actions[0].type;
 			    if(ac.indexOf("性别")!=-1){//性别
@@ -508,9 +519,7 @@
 					this.perPage=item.name;
 					this.updateInfo(9);
 				}
-  			},// 更新数据
-			updateInfo:function(type){
-
+  			},updateInfo:function(type){// 更新数据
 				let data1="";
 				if(type==0){//性别
 					let sex=0;
@@ -544,13 +553,13 @@
 					let per=0;
 					if(app.perPage=='显示下拉列表'){per=0}else if(app.perPage=='10篇'){per=10;}else if(app.perPage=='20篇'){per=20;}else if(app.perPage=='30篇'){per=30;}else if(app.perPage=='40篇'){per=40;}else if(app.perPage=='50篇'){per=50;}
 					data1="UUserId="+author+"&perpageNum="+per;
+				}else if(type==10){//
+					data1="UUserId="+author+"&UBornTime="+app.birthday;
 				}
-				//vant.Toast(data1);
 				axios.post('http://www.duola.vip/note/userinfo/updateUserInfo.do', data1
 				,{ headers:{ 'Content-Type':'application/x-www-form-urlencoded;charset=utf-8' }},
 				  )
 				  .then(function (response) {
-				    //console.log(response.data);
 					if(response.data.code==200){
 						vant.Toast('修改成功');
 					}
@@ -579,7 +588,6 @@
 			  .catch(function (error) {
 				console.log(error);
 			  });
-				
 			},afterRead(file) {
 				// 此时可以自行将文件上传至服务器
 				// let file1 = file.target.files[0];
@@ -603,11 +611,8 @@
 					console.log(error);
 				  });
 			}
-				
-				
 		}
 	})
-	
 	//生成随机数
 	function random(min, max){
 		// 若max不存在 min 赋值给max,并重新赋值min
@@ -617,8 +622,6 @@
 		}
 		return min+ Math.floor(Math.random()*(max-min+1))
 	}
-	
-	
 </script>
 </body>
 </html>

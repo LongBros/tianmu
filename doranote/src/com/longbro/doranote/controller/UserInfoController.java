@@ -68,7 +68,7 @@ public class UserInfoController{
     @ResponseBody
     public BaseResult<String> getAuthorInfoByUserId(int UUserId){
     	BaseResult<String> result=new BaseResult<String>();
-    	if(UUserId<1000000){
+    	if(UUserId<10000){
     		result.setCode(100);
     		result.setMessage("哆啦id不正确!!!");
     		return result;

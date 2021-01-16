@@ -55,9 +55,10 @@ public class SpideWechat {
 				voice="https://res.wx.qq.com/voice/getvoice?mediaid="+voice;
 				System.out.println(voice);
 				String docs=doc+"";
-				
-				String time=docs.substring(docs.indexOf("e(t,n,s,document.getElementById(")-200, docs.indexOf("e(t,n,s,document.getElementById("));
-				time=time.substring(time.indexOf(",s=\"")+4).substring(0, 10);
+				//			e(t,n,s,document.getElementById(
+				//12-08	改为e(t,n,i,document.getElementById(
+				String time=docs.substring(docs.indexOf("e(t,n,i,document.getElementById(")-200, docs.indexOf("e(t,n,i,document.getElementById("));
+				time=time.substring(time.indexOf(",i=\"")+4).substring(0, 10);
 				System.out.println(time);
 				map=new HashMap<>();
 				map.put("title", title);map.put("content", content);

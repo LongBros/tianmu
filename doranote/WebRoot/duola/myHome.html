@@ -9,11 +9,45 @@
 		<link rel="stylesheet" type="text/css" href="css/base.css"/>
 		<script type="text/javascript" src="http://www.duola.vip/js/jsutil.js"></script>
 		<script type="text/javascript" src="http://www.duola.vip/js/index.js"></script>
+		<script type="text/javascript" src="http://www.duola.vip/hui/lib/jquery/1.9.1/jquery.min.js"></script> 
+		<script type="text/javascript" src="http://www.duola.vip/hui/static/h-ui/js/H-ui.min.js"></script>
 	</head>
 	<body id="bodys">
 		<div style="text-align:center"><audio id="audio" src="" autoplay="autoplay" controls="controls"  style="float: left;margin-left: 20px;margin-top: 10px;display:none"></audio></div>
 	
 		<div id="app" v-cloak>
+			<div class="content">
+				<van-action-sheet v-model="searchBox" :title="searchTitle">
+				  <div style="margin: 0 15px;background-color: #FAF7F8;bottom: 0;left: 0;right: 0;">
+					  <van-search van-icon-search show-action v-model="key" :placeholder="goodTip"/>
+					  <div style="color: #78D36E;" @click="search" slot="action" >搜索</div>
+				  </div>
+				  <div class="content" id="commentBox" style="overflow-y:scroll;min-height: 460px;">
+					  <div v-if="songs.length==0&&searchTitle!=''" style="text-align:center"><br><br><br>嗨，没有搜到喔^_^，换个关键词试一下</div>
+					  <div v-if="songs.length==0&&searchTitle==''" style="text-align:center"><br><br><br>输入关键词搜搜试下吧^_^</div>
+					  <div v-for="(song,index) in songs" class="flex">
+						  
+						  <div class="flex_right">
+							 
+							  <p class="com_title">
+								  <span style="color:red" v-if="song.match_type==3">{{index+1}}.&emsp;</span><span style="color:green" v-if="song.match_type!=3">{{index+1}}.&emsp;</span>
+								  <span @click="chooseSong(song.sourceId,song.songName+'-'+song.singer,song.status,song.use_time)">
+									  <span style="color:gray" v-if="song.status==1">{{song.songName}}</span><span style="color:red" v-if="song.match_type==1&&song.status==0">{{song.songName}}</span><span v-if="song.match_type!=1&&song.status==0">{{song.songName}}</span>
+										-
+									  <span style="color:gray" v-if="song.status==1">{{song.singer}}</span><span style="color:red" v-if="song.match_type==2&&song.status==0">{{song.singer}}</span><span v-if="song.match_type!=2&&song.status==0">{{song.singer}}</span>
+								 </span>
+								 <span class="right"><a style="color:green" @click="playAudio(song.sourceId,song.songName)">试听</a></span>
+							  </p>
+							  
+							  
+						  </div>
+					  </div>
+				  </div>
+				  
+				</van-action-sheet>
+			</div>
+		
+		
 			<div class="user_top">
 				
 					<div class="flex_left"><van-image @click="yulanImg('http://img.duola.vip/image/tx/'+userData.headImage+'.jpg')" :src="'http://img.duola.vip/image/tx/'+userData.headImage+'.jpg'" /></div>
@@ -58,6 +92,18 @@
 			
 			<!-- 列表 -->
 			<ul class="user_list">
+				<li @click="openSearBox()">
+					<a>
+					<div class="user_list_left">
+						<img  src="http://img.duola.vip/image/tx/88888888_1585987333364.jpg" >
+						<span class="list_text">预约点歌</span>
+					</div>
+					<p style="">
+						<span class="red_num">hot</span>
+						<img class="jiantou" src="http://m.lianzhigou.cn/public/images/smallArrow.png" >
+					</p>
+					</a>
+				</li>
 				<li>
 					<a href="myDiary.html">
 					<div class="user_list_left">
@@ -80,10 +126,10 @@
 					</p>
 					</a>
 				</li>
-				<li><a href="accNew.html">
+				<li><a href="wordList.html">
 					<div class="user_list_left">
 						<van-icon name="records" />
-						<span class="list_text">添加账单</span>
+						<span class="list_text">背单词</span>
 					</div>
 					<p style="">
 						<img class="jiantou" src="http://m.lianzhigou.cn/public/images/smallArrow.png" >
@@ -150,7 +196,15 @@
 						</p>
 					</a>
 				</li>
-				
+				<li>
+					<a onclick="exitLogin()">
+						<div class="user_list_left">
+							<center><span class="list_text">退出登录</span></center>
+						</div>
+						<p style="">
+						</p>
+					</a>
+				</li>
 				<!-- <li>
 					<a href="message.html">
 					<div class="user_list_left">
@@ -181,7 +235,7 @@
 		if(author){
 		}else{
 			vant.Toast("请先登录")
-			window.location="http://www.duola.vip/duola";
+			window.location="http://m.duola.vip/";
 		}
 		var dayNum="";
 		var app=new Vue({
@@ -193,7 +247,12 @@
 				myCommentTotal:'',
 				myNoreadCommentTotal:'',
 				upNoreadTotal:'',//点赞我的
-				playLogo:'play-circle-o'
+				playLogo:'play-circle-o',
+				songs:[],//搜索到的歌曲集合
+				key:'',//待搜索的关键字
+				searchBox:false,//搜索框的显示与否
+				searchTitle:'',
+				goodTip:'输入歌名、歌手或歌词关键词'
 				
 			},
 			created:function(){
@@ -250,7 +309,7 @@
 					.catch(function (error) {
 						console.log(error);
 					})
-				},playAudio(){
+				},playAudio(sourceId,songName){
 					var song=document.getElementById("audio");
 					if(song.paused==false){//播放状态时点击暂停播放
 						vant.Toast("暂停播放歌曲->"+app.userData.homeSongName);
@@ -291,7 +350,88 @@
 					let img=[images];
 					console.log(img);
 					vant.ImagePreview(img)
-				},
+				},openSearBox(){
+					var index = Math.floor(Math.random()*100);
+					
+					this.searchBox=true;
+					
+					var page=random(1, 17);
+					if(index>30){//百分之七十的概率
+						vant.Toast("欢迎使用搜搜选歌功能^_^");
+						app.goodTip="滑动时请脱离空白位置滑动";
+					}else if(index<30){//百分之七十的概率
+						vant.Toast("将默认为你加载第"+page+"页的歌曲");
+						app.goodTip="滑动时请脱离空白位置滑动";
+					}
+					this.searchBox=true;
+					app.searchTitle="将为你加载第"+page+"页的歌曲";
+					axios.get('http://m.duola.vip/queryAllSongs.do?page='+page)
+					.then(function (response) {
+						console.log(response.data);
+						app.songs=response.data;
+						
+						//app.searchTitle="已为你加载出第"+page+"页的歌曲，看看有没有喜欢哒";
+						app.searchTitle="已为你加载出第"+page+"页的歌曲，看看有没有喜欢哒";
+						app.goodTip="输入歌名、歌手或歌词";
+					})
+					.catch(function (error) {
+						console.log(error);
+					})
+				},search(){
+					let key=app.key;
+					if(key==""){
+						vant.Toast("还是输入点关键词吧^_^");
+						return ;
+					}
+					//strongQuerySongs
+					//axios.get('http://www.duola.vip/querySongs.do?key='+key)
+					//.then(function (response) {
+					//	console.log(response.data);
+					//	app.songs=response.data;
+					//	app.searchTitle="共搜索到"+response.data.length+"首歌曲";
+						//for(var i=0;i<data.length;i++){
+						//	data[i].name=data[i].songName+"-"+data[i].singer;//+"&emsp;<a>试听</a>"
+						//}
+						//vant.Toast(data[0].songName);
+						
+					//})
+					//.catch(function (error) {
+					//	console.log(error);
+					//})
+					axios.get('http://m.duola.vip/strongQuerySongs2.do?key='+key)
+					.then(function (response) {
+						console.log(response.data);
+						if(response.data.code==200){
+							app.songs=response.data.result;
+							app.searchTitle="共搜索到"+response.data.num+"首歌曲";
+						}
+						
+						
+					})
+					.catch(function (error) {
+						console.log(error);
+					})
+				},chooseSong(sourceId,name,status,use_time){
+					use_time=use_time+"";
+					if(use_time.length>15){
+						use_time="在‘"+use_time.substring(0,10)+"’";
+					}else{
+						use_time="";
+					}
+					if(status==1){
+						vant.Toast("抱歉，这首歌曲已经"+use_time+"点播过了，请换一首吧");
+						return;
+					}
+					var con=confirm("确定预约点歌‘"+name+"’?今天您还可预约1首")
+					if(con==true){
+						vant.Toast("抱歉，点歌失败，站长承诺2021年1月份上线，敬请期待");
+					}else{
+						
+					}
+					//this.audioName=name;
+					//this.audio=sourceId;
+					//this.searchBox=false;
+				}
 			}
 		})
 		
@@ -302,7 +442,7 @@
 			document.cookie="userAddr=;";
 			document.cookie="userNick=;";
 			document.cookie="userId=;";
-			window.location="http://www.duola.vip/duola";
+			window.location="http://m.duola.vip/";
 		}
 		
 		
@@ -353,6 +493,16 @@
 		
 		function toast(){
 			vant.Toast("你累积写日记"+dayNum+"天\n图解：星星=1天，月亮="+7+"天，\n太阳="+7*7+"天，皇冠="+7*7*7+"天");
+		}
+		function exitLogin(){//2021-01-13
+			var con=confirm("您确定要退出登录吗？请牢记您的哆啦id:"+author+",以便下次正常登录")
+			if(con==false)
+				return;
+			$.cookie('userAddr', '', { expires: 30, path: '/' });
+			$.cookie('userNick', '', { expires: 30, path: '/' });
+			$.cookie('userId', '', { expires: 30, path: '/' });
+			alert("已退出");
+			window.location="http://m.duola.vip/";
 		}
 	</script>
 	</body>

@@ -55,10 +55,6 @@
 		<level value="WARN" />
 	</logger>
 
-	<logger name="com.redxun.core.web.servlet.SpringMvcServlet">
-		<level value="ERROR" />
-	</logger>
-
 	<logger name="org.springframework.security">
 		<level value="ERROR" />
 	</logger>
@@ -68,9 +64,6 @@
 	</logger>
 	<logger name="com.mitom.core.web.filter">
 		<level value="WARN" />
-	</logger>
-	<logger name="org.displaytag">
-		<level value="ERROR" />
 	</logger>
 	<logger name="com.longbro.doranote">
 		<level value="DEBUG" />

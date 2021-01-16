@@ -355,9 +355,17 @@
 		AND IFNULL(d.n_song_id,'')!='' <!-- 有音频 -->
 		<if test="onlySong==1"><!--onlySong=='1'时只查询歌曲 -->
 			AND IFNULL(s.songName,'')!=''
+			<if test="websiteId!='' and websiteId !=null"><!-- 歌曲只查询某个网站 -->
+					AND find_in_set(s.websiteId,#{websiteId})
+			</if>
 		</if>
 		<if test="onlySong==2"><!--onlySong=='2'时查询非歌曲音频 -->
 			AND IFNULL(s.songName,'')=''
+		</if>
+		<if test="onlySong==0"><!-- 查询所有		 歌曲只查询某个网站 -->
+			<if test="websiteId!='' and websiteId !=null">
+				AND (find_in_set(s.websiteId,#{websiteId}) or IFNULL(s.websiteId,'')='')
+			</if>
 		</if>
 		ORDER BY d.n_Time DESC LIMIT #{pageIndex},#{perPage}
 	</select>

@@ -378,7 +378,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			<!-- <span id="userNameT">LongBro</span><br> -->
 			昵称：<span id="userName">${diary.userName}</span><br>
 			哆啦ID：<span id="userId">${diary.NWritter}</span><br>
-			家歌：<span id="homeSong">四块五</span><br>
+			家歌：<span id="homeSong">四块五</span><span id="playBtn" title="点击可播放喔" style="cursor:pointer;color:red;" onclick="playHomeSong()">▷</span><br>
 			性别：<span id="sex">男</span><br>
 			个性签名：<span id="signature">自先沉稳，而后爱人</span><br>
 		</div>

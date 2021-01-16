@@ -4,6 +4,7 @@
 		<meta charset="utf-8" />
 		<title>哆啦记账-记录你的每一笔消费</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+		<meta name="description" content="条形图/柱状图">
 		<!-- 引入样式文件 -->
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vant@2.4/lib/index.css">
 		<link rel="stylesheet" type="text/css" href="css/base.css" />
@@ -132,6 +133,11 @@
 		<script>
 			var user = "";
 			user = getCookie("userId") + "";
+			if(user){
+			}else{
+				vant.Toast("请先登录");
+				window.location="http://m.duola.vip/login.html";
+			}
 			var userNick = decodeURI(decodeURI(getCookie("userNick") + ""));
 			var au = "0,2";
 			var index = Math.floor(Math.random() * 100);
